@@ -2,10 +2,10 @@
 
 ## Structure 
 
-The following folders will be used for the development:
+The following folder(s) will be used for the development:
 1. /android
-2. /server
 
-**/android** will contain the source code of the android application 
+**/android** will contain the source code of the android application.
 
-**/server** will contain the source code for the server if we decide to use a client-server architecture or want to have an API. 
+Other folders will be added as they are deemed necessary for other supplimentary development efforts (i.e. "/server" or "/iOS").
+
