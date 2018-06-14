@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RecordingActivity">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="368dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/flagsDrawer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Record Somethin' Will Ya?"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/flagsDrawer"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:background="@drawable/flags_drawer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+        <TextView
+            android:id="@+id/flagsDrawerTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Flags"
+            android:textAppearance="@android:style/TextAppearance.Small"
+            app:layout_constraintBottom_toTopOf="@+id/flagsLinearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/flagsLinearLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/flagsDrawerTitle">
+
+
+            <ImageButton
+                android:id="@+id/flag1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:onClick="showFlagToast"
+                android:scaleType="fitCenter"
+                android:tint="#f50000"
+                app:srcCompat="@drawable/ic_flag_icon" />
+
+            <ImageButton
+                android:id="@+id/flag2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:onClick="showFlagToast"
+                android:scaleType="fitCenter"
+                android:tint="#f5ed00"
+                app:srcCompat="@drawable/ic_flag_icon" />
+
+            <ImageButton
+                android:id="@+id/flag3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:onClick="showFlagToast"
+                android:scaleType="fitCenter"
+                android:tint="#86e600"
+                app:srcCompat="@drawable/ic_flag_icon" />
+
+            <ImageButton
+                android:id="@+id/flag4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:onClick="showFlagToast"
+                android:scaleType="fitCenter"
+                android:tint="#009ff5"
+                app:srcCompat="@drawable/ic_flag_icon" />
+
+            <ImageButton
+                android:id="@+id/flag5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:onClick="showFlagToast"
+                android:scaleType="fitCenter"
+                android:tint="#d000f5"
+                app:srcCompat="@drawable/ic_flag_icon" />
+        </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>
