@@ -12,13 +12,15 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_recording.*
 import kotlinx.android.synthetic.main.item_flag.view.*
+import java.util.*
+import kotlin.concurrent.timer
 
 
 /**
  * A class to store information about a given flag; I guess this is the "model"
  */
 data class RecordingFlag(
-        val time: Int, // ms from start of recording
+        val time: Long, // ms from start of recording
         @ColorInt var color: Int, // ColorInt? How do I annotate this type?
         var label: String?
 )
@@ -27,11 +29,11 @@ data class RecordingFlag(
  * Utility function for converting a number of milliseconds to a string like "00:20:21".
  * Haven't really tested this; probably not bullet-proof (or idiot-proof for that matter :P)
  */
-fun formatFlagTime(ms: Int): String {
+fun formatFlagTime(ms: Long): String {
     val allSeconds = ms / 1000
-    val seconds: Int = allSeconds % 60
-    val minutes: Int = (allSeconds / 60) % 60
-    val hours: Int = allSeconds / (60*60)
+    val seconds: Long = allSeconds % 60
+    val minutes: Long = (allSeconds / 60) % 60
+    val hours: Long = allSeconds / (60*60)
     return listOf(hours, minutes, seconds)
             .joinToString(":") { it.toString().padStart(2, '0') }
 }
@@ -85,6 +87,7 @@ val FLAG_BUTTON_COLORS = mapOf(
  */
 class RecordingActivity : AppCompatActivity() {
     private lateinit var flagsAdapter : RecordingFlagAdapter
+    private var recordingStart : Long = System.currentTimeMillis()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,10 +102,21 @@ class RecordingActivity : AppCompatActivity() {
 
         flagsAdapter = RecordingFlagAdapter(this, data)
         list_flags.adapter = flagsAdapter
+
+        timer("Recording timer",
+                period=1000,
+                action={
+                    text_timer.post {
+                        val time = System.currentTimeMillis() - recordingStart
+                        text_timer.text = formatFlagTime(time)
+                    }
+                }
+        )
     }
 
     fun flagButtonPressed(view: View) {
         val colorId = FLAG_BUTTON_COLORS[view.id]
-        flagsAdapter.add(RecordingFlag(9000, colorFromId(colorId!!), null))
+        val time = System.currentTimeMillis() - recordingStart
+        flagsAdapter.add(RecordingFlag(time, colorFromId(colorId!!), null))
     }
 }
