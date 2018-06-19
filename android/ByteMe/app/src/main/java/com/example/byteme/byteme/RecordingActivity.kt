@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_recording.*
 import kotlinx.android.synthetic.main.item_flag.view.*
 
@@ -70,9 +69,23 @@ fun AppCompatActivity.colorFromId(res_id: Int, theme: Resources.Theme? = null): 
 }
 
 /**
+ * Map of button id -> color id; this is because Android won't let me get the tint color of the
+ * button from the code -_-
+ */
+val FLAG_BUTTON_COLORS = mapOf(
+        R.id.flag1 to R.color.flag_red,
+        R.id.flag2 to R.color.flag_yellow,
+        R.id.flag3 to R.color.flag_green,
+        R.id.flag4 to R.color.flag_blue,
+        R.id.flag5 to R.color.flag_purple
+)
+
+/**
  * The activity class for recording a new... recording
  */
 class RecordingActivity : AppCompatActivity() {
+    private lateinit var flagsAdapter : RecordingFlagAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recording)
@@ -84,14 +97,12 @@ class RecordingActivity : AppCompatActivity() {
                 RecordingFlag(18000, colorFromId(R.color.flag_red), null)
         )
 
-        val adapter = RecordingFlagAdapter(this, data)
-
-        list_flags.adapter = adapter
+        flagsAdapter = RecordingFlagAdapter(this, data)
+        list_flags.adapter = flagsAdapter
     }
 
-    fun showFlagToast(view: View) {
-        Toast
-        .makeText(applicationContext, "Flag!", Toast.LENGTH_SHORT)
-        .show()
+    fun flagButtonPressed(view: View) {
+        val colorId = FLAG_BUTTON_COLORS[view.id]
+        flagsAdapter.add(RecordingFlag(9000, colorFromId(colorId!!), null))
     }
 }
