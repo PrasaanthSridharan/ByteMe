@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_recording.*
 import kotlinx.android.synthetic.main.item_flag.view.*
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.timer
 
 
@@ -88,19 +89,13 @@ val FLAG_BUTTON_COLORS = mapOf(
 class RecordingActivity : AppCompatActivity() {
     private lateinit var flagsAdapter : RecordingFlagAdapter
     private var recordingStart : Long = System.currentTimeMillis()
+    private var flags : ArrayList<RecordingFlag> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recording)
 
-        // dummy data
-        val data = arrayListOf(
-                RecordingFlag(1324, colorFromId(R.color.flag_red), null),
-                RecordingFlag(7500, colorFromId(R.color.flag_blue), "This is where Dale starting laughing again + more words to make this longer"),
-                RecordingFlag(18000, colorFromId(R.color.flag_red), null)
-        )
-
-        flagsAdapter = RecordingFlagAdapter(this, data)
+        flagsAdapter = RecordingFlagAdapter(this, flags)
         list_flags.adapter = flagsAdapter
 
         timer("Recording timer",
