@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".RecordingActivity">
 
     <android.support.constraint.ConstraintLayout
@@ -12,31 +14,75 @@
         android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/flagsDrawer"
+        app:layout_constraintBottom_toTopOf="@+id/layout_flags_drawer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed">
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/text_title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="Record Somethin' Will Ya?"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:inputType="textPersonName"
+            android:selectAllOnFocus="true"
+            android:text="Recording 0014"
+            android:hint="Recording Title"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toTopOf="@id/list_flags"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+        <ListView
+            android:id="@+id/list_flags"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/text_timer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_title"/>
+
+        <TextView
+            android:id="@+id/text_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00:08"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/button_finish"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/list_flags" />
+
+        <ImageButton
+            android:id="@+id/button_finish"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:adjustViewBounds="false"
+            android:background="@drawable/btn_stop_recording"
+            android:cropToPadding="true"
+            android:padding="-10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_stop_black_24dp"
+            android:tint="#f44336"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:contentDescription="Finish Recording" />
+
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/flagsDrawer"
+        android:id="@+id/layout_flags_drawer"
         android:layout_width="0dp"
         android:layout_height="120dp"
         android:background="@drawable/flags_drawer"
@@ -46,7 +92,7 @@
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
         <TextView
-            android:id="@+id/flagsDrawerTitle"
+            android:id="@+id/text_flags_drawer_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -55,14 +101,14 @@
             android:layout_marginTop="16dp"
             android:text="Flags"
             android:textAppearance="@android:style/TextAppearance.Small"
-            app:layout_constraintBottom_toTopOf="@+id/flagsLinearLayout"
+            app:layout_constraintBottom_toTopOf="@+id/layout_flag_buttons"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:id="@+id/flagsLinearLayout"
+            android:id="@+id/layout_flag_buttons"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
@@ -72,8 +118,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/flagsDrawerTitle">
-
+            app:layout_constraintTop_toBottomOf="@+id/text_flags_drawer_title">
 
             <ImageButton
                 android:id="@+id/flag1"
@@ -83,7 +128,7 @@
                 android:background="@null"
                 android:onClick="showFlagToast"
                 android:scaleType="fitCenter"
-                android:tint="#f50000"
+                android:tint="@color/flag_red"
                 app:srcCompat="@drawable/ic_flag_icon" />
 
             <ImageButton
@@ -94,7 +139,7 @@
                 android:background="@null"
                 android:onClick="showFlagToast"
                 android:scaleType="fitCenter"
-                android:tint="#f5ed00"
+                android:tint="@color/flag_yellow"
                 app:srcCompat="@drawable/ic_flag_icon" />
 
             <ImageButton
@@ -105,7 +150,7 @@
                 android:background="@null"
                 android:onClick="showFlagToast"
                 android:scaleType="fitCenter"
-                android:tint="#86e600"
+                android:tint="@color/flag_green"
                 app:srcCompat="@drawable/ic_flag_icon" />
 
             <ImageButton
@@ -116,7 +161,7 @@
                 android:background="@null"
                 android:onClick="showFlagToast"
                 android:scaleType="fitCenter"
-                android:tint="#009ff5"
+                android:tint="@color/flag_blue"
                 app:srcCompat="@drawable/ic_flag_icon" />
 
             <ImageButton
@@ -127,7 +172,7 @@
                 android:background="@null"
                 android:onClick="showFlagToast"
                 android:scaleType="fitCenter"
-                android:tint="#d000f5"
+                android:tint="@color/flag_purple"
                 app:srcCompat="@drawable/ic_flag_icon" />
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>

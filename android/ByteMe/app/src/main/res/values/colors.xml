@@ -3,4 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="flag_red">#f50000</color>
+    <color name="flag_yellow">#f5ed00</color>
+    <color name="flag_green">#86e600</color>
+    <color name="flag_blue">#009ff5</color>
+    <color name="flag_purple">#d000f5</color>
 </resources>
