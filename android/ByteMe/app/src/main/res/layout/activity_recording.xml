@@ -70,15 +70,16 @@
             android:layout_height="80dp"
             android:adjustViewBounds="false"
             android:background="@drawable/btn_stop_recording"
+            android:contentDescription="Finish Recording"
             android:cropToPadding="true"
+            android:onClick="stopButtonPressed"
             android:padding="-10dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_stop_black_24dp"
             android:tint="#f44336"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:contentDescription="Finish Recording" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 

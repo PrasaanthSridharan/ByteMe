@@ -4,6 +4,7 @@ import Model.*
 import colorFromId
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
 import android.support.annotation.ColorInt
@@ -85,5 +86,13 @@ class RecordingActivity : AppCompatActivity() {
         val colorId = FLAG_BUTTON_COLORS[view.id]
         val time = System.currentTimeMillis() - recordingStart
         flagsAdapter.add(RecordingFlag(time, colorFromId(colorId!!), null))
+    }
+
+    fun stopButtonPressed(view: View) {
+        val intent = Intent(this, MainActivity::class.java)
+        // To pass any data to next activity
+        //intent.putExtra("keyIdentifier", value)
+        // start your next activity
+        startActivity(intent)
     }
 }
