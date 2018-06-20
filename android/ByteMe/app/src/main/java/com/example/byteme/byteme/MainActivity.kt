@@ -1,16 +1,20 @@
 package com.example.byteme.byteme
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.View
-import android.widget.TextView
-import kotlinx.android.synthetic.main.activity_main.view.*
-import kotlinx.android.synthetic.main.activity_recording.view.*
+import android.widget.ImageButton
 import kotlinx.android.synthetic.main.recording_list_item.view.*
+import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.LocalDateTime
 
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -18,8 +22,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewManager: RecyclerView.LayoutManager
 
     // dataset of dummy recording titles
+    /*
     val myDataset = arrayOf("Meeting", "Fri_scrum", "Mon_scrum", "Lecture", "Interview",
             "Approval", "Brainstorming")
+    */
+
+    private val myDataset = createDummyRecordings(15)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +49,16 @@ class MainActivity : AppCompatActivity() {
             // specify an viewAdapter
             adapter = viewAdapter
         }
+
+        val micButton = findViewById<ImageButton>(R.id.mic_button)
+
+        micButton.setOnClickListener {
+            val intent = Intent(this, RecordingActivity::class.java)
+            startActivity(intent)
+        }
     }
 
-    class RecordingAdapter(private val myDataset: Array<String>) :
+    private class RecordingAdapter(private val myDataset: Array<Recording>) :
             RecyclerView.Adapter<RecordingAdapter.ViewHolder>() {
 
         // Provide a reference to the views for each data item
@@ -51,9 +67,11 @@ class MainActivity : AppCompatActivity() {
         // Each data item is just a string in this case that is shown in a TextView.
         //class ViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
 
-        class ViewHolder (view: View) : RecyclerView.ViewHolder(view) {
-            // Holds the TextView that will add each animal to
+        class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            // Holds the view that will add each recording title
             val tvRecordingTitle = view.tv_recording_title
+            val tvDate = view.tv_date
+            val tvDuration = view.tv_duration
         }
 
         // Create new views (invoked by the layout manager)
@@ -69,14 +87,34 @@ class MainActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
-            holder.tvRecordingTitle.text = myDataset[position]
+            holder.tvRecordingTitle.text = myDataset[position].title
+            holder.tvDate.text = myDataset[position].date
+            holder.tvDuration.text = myDataset[position].duration
         }
 
         // Return the number of recordings in the list
         override fun getItemCount() = myDataset.size
     }
 
-    class Recording(val title: String, val date: String, val timestamp: Int) {
-        // To do: change type of date property to actual date type
+    fun createDummyRecordings(num: Int) : Array<Recording>{
+        //do stuff
+        var recordings = Array(num){i -> Recording("Recording "+(i + 1).toString(), "2018/07/"+(i + 1).toString().padStart(2,
+                    '0'), "00:02:31")}
+        return recordings
     }
+
+    fun openRecording(view: View) {
+        val intent = Intent(this, PlaybackActivity::class.java)
+        // To pass any data to next activity
+        //intent.putExtra("keyIdentifier", value)
+        // start your next activity
+        startActivity(intent)
+    }
+
 }
+
+data class Recording(
+    val title: String,
+    val date: String,
+    val duration: String)
+

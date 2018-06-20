@@ -21,7 +21,7 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 
 
-val audioFile = "/Music/ParadiseCity.mp3"
+val audioFile = "/SmartVoiceRecorder/Record_0001.wav"
 
 class PlaybackActivity : AppCompatActivity() {
 
@@ -98,10 +98,9 @@ class PlaybackActivity : AppCompatActivity() {
         viewManager = LinearLayoutManager(this)
         //rv_recording_list.layoutManager = LinearLayoutManager(this)
 
-        val data = arrayOf(RecordingFlag(42000, colorFromId(R.color.flag_red), "book1"),
-                RecordingFlag(60000, colorFromId(R.color.flag_green), "book2"),
-                RecordingFlag(11110000, colorFromId(R.color.flag_purple), "test"),
-                RecordingFlag(2562000, colorFromId(R.color.flag_yellow), "book3"))
+        val data = arrayOf(RecordingFlag(10000, colorFromId(R.color.flag_red), "flag1"),
+                RecordingFlag(23000, colorFromId(R.color.flag_green), "flag2"),
+                RecordingFlag(29000, colorFromId(R.color.flag_purple), "flag3"))
 
         viewAdapter = PlaybackAdapter(data, fun (time) {
             if (time <= mp.duration) {
