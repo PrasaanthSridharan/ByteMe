@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_recording.*
 import kotlinx.android.synthetic.main.item_flag.view.*
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.timer
 
@@ -55,6 +54,9 @@ class RecordingFlagAdapter : ArrayAdapter<RecordingFlag> {
             text_time.text = formatFlagTime(flag.time)
             image_flag.setColorFilter(flag.color)
             text_label.background.setTint(flag.color)
+            text_label.onFocusChangeListener = View.OnFocusChangeListener {
+                _, hasFocus -> if (!hasFocus) flag.label = text_label.text.toString()
+            }
         }
         return view
     }
