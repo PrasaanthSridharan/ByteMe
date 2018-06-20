@@ -1,5 +1,8 @@
 package com.example.byteme.byteme
 
+import Model.*
+import colorFromId
+
 import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
@@ -17,28 +20,6 @@ import kotlin.concurrent.timer
 
 
 /**
- * A class to store information about a given flag; I guess this is the "model"
- */
-data class RecordingFlag(
-        val time: Long, // ms from start of recording
-        @ColorInt var color: Int, // ColorInt? How do I annotate this type?
-        var label: String?
-)
-
-/**
- * Utility function for converting a number of milliseconds to a string like "00:20:21".
- * Haven't really tested this; probably not bullet-proof (or idiot-proof for that matter :P)
- */
-fun formatFlagTime(ms: Long): String {
-    val allSeconds = ms / 1000
-    val seconds: Long = allSeconds % 60
-    val minutes: Long = (allSeconds / 60) % 60
-    val hours: Long = allSeconds / (60*60)
-    return listOf(hours, minutes, seconds)
-            .joinToString(":") { it.toString().padStart(2, '0') }
-}
-
-/**
  * RecordingFlag Adapter which binds data from the RecordingFlag class into the layout XML
  */
 class RecordingFlagAdapter : ArrayAdapter<RecordingFlag> {
@@ -51,7 +32,7 @@ class RecordingFlagAdapter : ArrayAdapter<RecordingFlag> {
         val flag = getItem(position)
         view.apply {
             text_label.setText(flag.label)
-            text_time.text = formatFlagTime(flag.time)
+            text_time.text = Helper.timeToString(flag.time)
             image_flag.setColorFilter(flag.color)
             text_label.background.setTint(flag.color)
             text_label.onFocusChangeListener = View.OnFocusChangeListener {
@@ -60,17 +41,6 @@ class RecordingFlagAdapter : ArrayAdapter<RecordingFlag> {
         }
         return view
     }
-}
-
-/**
- * Utility method which SHOULD BE INCLUDED IN ANDROID CORE >.<
- * Converts a color resource to a ColorInt
- * Must be called after onCreate so that resources is defined.
- * Ex: colorFromId(R.color.flag_red)
- */
-@ColorInt
-fun AppCompatActivity.colorFromId(res_id: Int, theme: Resources.Theme? = null): Int {
-    return ResourcesCompat.getColor(resources, res_id, theme)
 }
 
 /**
@@ -105,7 +75,7 @@ class RecordingActivity : AppCompatActivity() {
                 action={
                     text_timer.post {
                         val time = System.currentTimeMillis() - recordingStart
-                        text_timer.text = formatFlagTime(time)
+                        text_timer.text = Helper.timeToString(time)
                     }
                 }
         )

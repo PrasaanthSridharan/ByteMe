@@ -15,6 +15,13 @@
         android:paddingRight="4dp"
         app:srcCompat="@drawable/ic_play_arrow_black_24dp" />
 
+    <ImageView
+        android:id="@+id/flagIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/bookmark"
+        app:srcCompat="@drawable/ic_flag_icon" />
+
     <TextView
         android:id="@+id/tv_bookmark_time"
         android:layout_width="wrap_content"

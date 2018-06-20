@@ -1,7 +1,8 @@
 package com.example.byteme.byteme
 
-import Bookmark
+import Model.*
 import Helper
+import colorFromId
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -15,11 +16,9 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Environment
 import android.os.Handler
-import android.util.Log
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-
 
 
 val audioFile = "/Music/ParadiseCity.mp3"
@@ -99,14 +98,14 @@ class PlaybackActivity : AppCompatActivity() {
         viewManager = LinearLayoutManager(this)
         //rv_recording_list.layoutManager = LinearLayoutManager(this)
 
-        val data = arrayOf(Bookmark(audioFile, 42000, "book1"),
-                Bookmark(audioFile, 60000, "book2"),
-                Bookmark(audioFile, 11110000, "test"),
-                Bookmark(audioFile, 2562000, "book3"))
+        val data = arrayOf(RecordingFlag(42000, colorFromId(R.color.flag_red), "book1"),
+                RecordingFlag(60000, colorFromId(R.color.flag_green), "book2"),
+                RecordingFlag(11110000, colorFromId(R.color.flag_purple), "test"),
+                RecordingFlag(2562000, colorFromId(R.color.flag_yellow), "book3"))
 
         viewAdapter = PlaybackAdapter(data, fun (time) {
             if (time <= mp.duration) {
-                mp.seekTo(time)
+                mp.seekTo(time.toInt())
                 mp.start()
             }
         })
@@ -124,8 +123,8 @@ class PlaybackActivity : AppCompatActivity() {
     }
 }
 
-class PlaybackAdapter(private val myDataset: Array<Bookmark>,
-                      private val onBookmarkPlayPress: (time: Int) -> Unit) :
+class PlaybackAdapter(private val myDataset: Array<RecordingFlag>,
+                      private val onBookmarkPlayPress: (time: Long) -> Unit) :
         RecyclerView.Adapter<PlaybackAdapter.ViewHolder>() {
 
     // Provide a reference to the views for each data item
@@ -139,6 +138,7 @@ class PlaybackAdapter(private val myDataset: Array<Bookmark>,
         val tvBookmarkTitle = view.tv_bookmark_title
         val tvBookmarkTime = view.tv_bookmark_time
         val playButton = view.playButton
+        val flagIcon = view.flagIcon
     }
 
     // Create new views (invoked by the layout manager)
@@ -154,8 +154,9 @@ class PlaybackAdapter(private val myDataset: Array<Bookmark>,
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.tvBookmarkTitle.text = myDataset[position].name
-        holder.tvBookmarkTime.text = Helper.timeToString(myDataset[position].time / 1000)
+        holder.tvBookmarkTitle.text = myDataset[position].label
+        holder.tvBookmarkTime.text = Helper.timeToString(myDataset[position].time)
+        holder.flagIcon.setColorFilter(myDataset[position].color)
 
         holder.playButton.setOnClickListener({
             onBookmarkPlayPress(myDataset[position].time)

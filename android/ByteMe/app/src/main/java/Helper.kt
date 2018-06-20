@@ -1,34 +1,40 @@
+import android.content.res.Resources
+import android.support.annotation.ColorInt
+import android.support.v4.content.res.ResourcesCompat
+import android.support.v7.app.AppCompatActivity
+
 class Helper {
 
     companion object {
-        fun timeToString(inputTime: Int): String {
-            var time = inputTime
-            var stringTime = ""
-
-            if (time > 3599) {
-                stringTime += time / 3600
-                stringTime += ":"
-
-                time = time % 3600
-            }
-            if (time > 59) {
-                stringTime += time / 60
-                stringTime += ":"
-
-                time = time % 60
+        /**
+         * Utility function for converting a number of milliseconds to a string like "00:20:21".
+         * Haven't really tested this; probably not bullet-proof (or idiot-proof for that matter :P)
+         */
+        fun timeToString(time: Long): String {
+            val allSeconds = time / 1000
+            val seconds: Long = allSeconds % 60
+            val minutes: Long = (allSeconds / 60) % 60
+            val hours: Long = allSeconds / (60*60)
+            if (hours > 0) {
+                return listOf(hours, minutes, seconds)
+                        .joinToString(":") { it.toString().padStart(2, '0') }
             } else {
-                stringTime += "00:"
+                return listOf(minutes, seconds)
+                        .joinToString(":") { it.toString().padStart(2, '0') }
             }
-            if (time < 10) {
-                stringTime += "0"
-                stringTime += time
-            } else {
-                stringTime += time
-            }
-
-
-            return stringTime
         }
+
     }
 
+}
+
+/**
+ * Utility method which SHOULD BE INCLUDED IN ANDROID CORE >.<
+ * Converts a color resource to a ColorInt
+ * Must be called after onCreate so that resources is defined.
+ * Ex: colorFromId(R.color.flag_red)
+ */
+@ColorInt
+fun AppCompatActivity.colorFromId(res_id: Int, theme: Resources.Theme? = null): Int {
+    return ResourcesCompat.getColor(resources, res_id, theme)
 }
