@@ -5,4 +5,5 @@
     <string name="time_stamp">00:00:00</string>
     <string name="date">2018-06-04</string>
     <string name="done_button">Done</string>
+    <string name="play_button">Play</string>
 </resources>
