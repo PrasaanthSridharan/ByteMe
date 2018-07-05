@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.View
 import android.widget.ImageButton
+import businessLayer.Recording
 import kotlinx.android.synthetic.main.recording_list_item.view.*
 import java.text.SimpleDateFormat
 import java.time.Duration
@@ -112,9 +113,4 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
-
-data class Recording(
-    val title: String,
-    val date: String,
-    val duration: String)
 
