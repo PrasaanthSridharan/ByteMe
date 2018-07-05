@@ -18,6 +18,7 @@ import android.os.Handler
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import kotlinx.android.synthetic.main.playback_bookmarks_list.view.*
 
 
 val audioFile = "/SmartVoiceRecorder/Record_0001.wav"

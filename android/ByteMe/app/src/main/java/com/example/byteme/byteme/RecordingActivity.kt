@@ -11,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import kotlinx.android.synthetic.main.activity_recording.*
+import kotlinx.android.synthetic.main.item_flag.view.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.timer
 
