@@ -1,31 +1,26 @@
+package helpers
+
 import android.content.res.Resources
 import android.support.annotation.ColorInt
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 
-class Helper {
-
-    companion object {
-        /**
-         * Utility function for converting a number of milliseconds to a string like "00:20:21".
-         * Haven't really tested this; probably not bullet-proof (or idiot-proof for that matter :P)
-         */
-        fun timeToString(time: Long): String {
-            val allSeconds = time / 1000
-            val seconds: Long = allSeconds % 60
-            val minutes: Long = (allSeconds / 60) % 60
-            val hours: Long = allSeconds / (60*60)
-            if (hours > 0) {
-                return listOf(hours, minutes, seconds)
-                        .joinToString(":") { it.toString().padStart(2, '0') }
-            } else {
-                return listOf(minutes, seconds)
-                        .joinToString(":") { it.toString().padStart(2, '0') }
-            }
-        }
-
+/**
+ * Utility function for converting a number of milliseconds to a string like "20:21".
+ * Haven't really tested this; probably not bullet-proof (or idiot-proof for that matter :P)
+ */
+fun timeToString(time: Long): String {
+    val allSeconds = time / 1000
+    val seconds: Long = allSeconds % 60
+    val minutes: Long = (allSeconds / 60) % 60
+    val hours: Long = allSeconds / (60*60)
+    if (hours > 0) {
+        return listOf(hours, minutes, seconds)
+                .joinToString(":") { it.toString().padStart(2, '0') }
+    } else {
+        return listOf(minutes, seconds)
+                .joinToString(":") { it.toString().padStart(2, '0') }
     }
-
 }
 
 /**

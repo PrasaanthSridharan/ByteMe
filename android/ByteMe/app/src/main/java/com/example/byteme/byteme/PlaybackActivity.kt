@@ -1,8 +1,6 @@
 package com.example.byteme.byteme
 
 import businessLayer.*
-import Helper
-import colorFromId
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -18,6 +16,7 @@ import android.os.Handler
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import helpers.colorFromId
 import kotlinx.android.synthetic.main.playback_bookmarks_list.view.*
 
 
@@ -154,7 +153,7 @@ class PlaybackAdapter(private val myDataset: Array<RecordingFlag>,
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.tvBookmarkTitle.text = myDataset[position].label
-        holder.tvBookmarkTime.text = Helper.timeToString(myDataset[position].time)
+        holder.tvBookmarkTime.text = helpers.timeToString(myDataset[position].time)
         holder.flagIcon.setColorFilter(myDataset[position].color)
 
         holder.playButton.setOnClickListener({
