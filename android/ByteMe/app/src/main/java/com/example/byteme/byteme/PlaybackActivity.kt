@@ -1,6 +1,6 @@
 package com.example.byteme.byteme
 
-import Model.*
+import businessLayer.*
 import Helper
 import colorFromId
 
@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.playback_bookmarks_list.view.*
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Environment

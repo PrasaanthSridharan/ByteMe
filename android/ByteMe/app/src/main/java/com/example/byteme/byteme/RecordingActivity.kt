@@ -1,21 +1,16 @@
 package com.example.byteme.byteme
 
-import Model.*
+import businessLayer.*
 import colorFromId
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.os.Bundle
-import android.support.annotation.ColorInt
-import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import kotlinx.android.synthetic.main.activity_recording.*
-import kotlinx.android.synthetic.main.item_flag.view.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.timer
 
