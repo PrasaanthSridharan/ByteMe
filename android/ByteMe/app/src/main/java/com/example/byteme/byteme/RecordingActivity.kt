@@ -1,14 +1,11 @@
 package com.example.byteme.byteme
 
-import Model.*
-import colorFromId
+import businessLayer.*
+import helpers.colorFromId
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.os.Bundle
-import android.support.annotation.ColorInt
-import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +30,7 @@ class RecordingFlagAdapter : ArrayAdapter<RecordingFlag> {
         val flag = getItem(position)
         view.apply {
             text_label.setText(flag.label)
-            text_time.text = Helper.timeToString(flag.time)
+            text_time.text = helpers.timeToString(flag.time)
             image_flag.setColorFilter(flag.color)
             text_label.background.setTint(flag.color)
             text_label.onFocusChangeListener = View.OnFocusChangeListener {
@@ -76,7 +73,7 @@ class RecordingActivity : AppCompatActivity() {
                 action={
                     text_timer.post {
                         val time = System.currentTimeMillis() - recordingStart
-                        text_timer.text = Helper.timeToString(time)
+                        text_timer.text = helpers.timeToString(time)
                     }
                 }
         )

@@ -1,8 +1,6 @@
 package com.example.byteme.byteme
 
-import Model.*
-import Helper
-import colorFromId
+import businessLayer.*
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -11,7 +9,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.playback_bookmarks_list.view.*
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Environment
@@ -19,6 +16,8 @@ import android.os.Handler
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import helpers.colorFromId
+import kotlinx.android.synthetic.main.playback_bookmarks_list.view.*
 
 
 val audioFile = "/SmartVoiceRecorder/Record_0001.wav"
@@ -154,7 +153,7 @@ class PlaybackAdapter(private val myDataset: Array<RecordingFlag>,
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.tvBookmarkTitle.text = myDataset[position].label
-        holder.tvBookmarkTime.text = Helper.timeToString(myDataset[position].time)
+        holder.tvBookmarkTime.text = helpers.timeToString(myDataset[position].time)
         holder.flagIcon.setColorFilter(myDataset[position].color)
 
         holder.playButton.setOnClickListener({
