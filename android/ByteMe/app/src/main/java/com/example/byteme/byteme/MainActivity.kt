@@ -1,23 +1,23 @@
 package com.example.byteme.byteme
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.ContextCompat.startActivity
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
 import businessLayer.Recording
+import dataAccessLayer.AppDatabase
 import kotlinx.android.synthetic.main.recording_list_item.view.*
-import java.text.SimpleDateFormat
-import java.time.Duration
-import java.time.LocalDateTime
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
+
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var db: AppDatabase
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
             "Approval", "Brainstorming")
     */
 
-    private val myDataset = createDummyRecordings(15)
+    private var myDataset: MutableList<Recording> = mutableListOf()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +51,14 @@ class MainActivity : AppCompatActivity() {
             adapter = viewAdapter
         }
 
+        launch {
+//            db = AppDatabase.getInstance(this@MainActivity)!!
+            db = AppDatabase.getDummyInstance(this@MainActivity)!!
+
+            myDataset.addAll(db.recordingDao.getAll().map {Recording.fromRecordingRoom(it)})
+            launch(UI) { viewAdapter.notifyDataSetChanged() }
+        }
+
         val micButton = findViewById<ImageButton>(R.id.mic_button)
 
         micButton.setOnClickListener {
@@ -59,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private class RecordingAdapter(private val myDataset: Array<Recording>) :
+    private class RecordingAdapter(private val myDataset: MutableList<Recording>) :
             RecyclerView.Adapter<RecordingAdapter.ViewHolder>() {
 
         // Provide a reference to the views for each data item
