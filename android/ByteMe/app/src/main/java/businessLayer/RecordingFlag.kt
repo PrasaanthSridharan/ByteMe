@@ -31,12 +31,12 @@ data class RecordingFlagRoom(
         val id: Long?,
 
         @ColumnInfo(name = "recording_id")
-        val recordingId: Long?,
+        val recordingId: Long,
 
         /* offset in ms from start of recording */
         val time: Long,
 
-        @ColorInt var color: Int,
+        @ColorInt val color: Int,
 
-        var label: String?
+        val label: String?
 )

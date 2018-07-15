@@ -14,6 +14,9 @@ abstract class RecordingFlagDao {
     @Insert(onConflict = REPLACE)
     abstract fun insert(flag: RecordingFlagRoom)
 
+    @Insert(onConflict = REPLACE)
+    abstract fun insert(flag: Collection<RecordingFlagRoom>)
+
     @Query("DELETE from recording_flags")
     abstract fun deleteAll()
 

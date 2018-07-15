@@ -33,3 +33,12 @@ fun timeToString(time: Long): String {
 fun AppCompatActivity.colorFromId(res_id: Int, theme: Resources.Theme? = null): Int {
     return ResourcesCompat.getColor(resources, res_id, theme)
 }
+
+/**
+ * Logic used to create the default recording names (like "Recording 0042")
+ */
+object DefaultRecordingName {
+    const val padding = 4
+    val regex = Regex("""^Recording \d{$padding}""" + "\$")
+    fun ithName(i: Int): String = "Recording ${i.toString().padStart(padding, '0')}"
+}

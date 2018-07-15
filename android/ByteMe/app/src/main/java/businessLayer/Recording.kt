@@ -29,6 +29,7 @@ data class Recording(
         tableName = "recordings",
         indices = [
             Index("created"), // for sorting
+            Index("name"), // for search/sorting
             Index("transcript") // for searching
         ])
 data class RecordingRoom(
