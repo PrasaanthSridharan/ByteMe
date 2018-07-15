@@ -7,22 +7,22 @@ import android.arch.persistence.room.Query
 import businessLayer.RecordingRoom
 
 @Dao
-interface RecordingDao {
+abstract class RecordingDao {
     @Query("SELECT * from recordings ORDER BY created DESC")
-    fun getAll(): List<RecordingRoom>
+    abstract fun getAll(): List<RecordingRoom>
 
     @Insert(onConflict = REPLACE)
-    fun insert(recording: RecordingRoom)
+    abstract fun insert(recording: RecordingRoom): Long
 
     @Insert(onConflict = REPLACE)
-    fun insert(recordings: Array<RecordingRoom>)
+    abstract fun insert(recordings: Array<RecordingRoom>)
 
     @Query("DELETE from recordings")
-    fun deleteAll()
+    abstract fun deleteAll()
 
     @Query("SELECT * from recordings WHERE transcript LIKE :query")
-    fun searchTranscripts(query: String): List<RecordingRoom>
+    abstract fun searchTranscripts(query: String): List<RecordingRoom>
 
     @Query("UPDATE recordings SET transcript = :transcript WHERE id = :recordingId")
-    fun addTranscript(recordingId: Long, transcript: String)
+    abstract fun addTranscript(recordingId: Long, transcript: String)
 }
