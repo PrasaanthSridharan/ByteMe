@@ -9,11 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import businessLayer.Recording
+import businessLayer.RecordingRoom
 import dataAccessLayer.AppDatabase
 import kotlinx.android.synthetic.main.recording_list_item.view.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import java.text.SimpleDateFormat
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,7 +29,7 @@ class MainActivity : AppCompatActivity() {
             "Approval", "Brainstorming")
     */
 
-    private var myDataset: MutableList<Recording> = mutableListOf()
+    private var myDataset: MutableList<RecordingRoom> = mutableListOf()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 //            db = AppDatabase.getInstance(this@MainActivity)!!
             db = AppDatabase.getDummyInstance(this@MainActivity)!!
 
-            myDataset.addAll(db.recordingDao.getAll().map {Recording.fromRecordingRoom(it)})
+            myDataset.addAll(db.recordingDao.getAll())
             launch(UI) { viewAdapter.notifyDataSetChanged() }
         }
 
@@ -67,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private class RecordingAdapter(private val myDataset: MutableList<Recording>) :
+    private class RecordingAdapter(private val myDataset: MutableList<RecordingRoom>) :
             RecyclerView.Adapter<RecordingAdapter.ViewHolder>() {
 
         // Provide a reference to the views for each data item
@@ -96,20 +97,14 @@ class MainActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
-            holder.tvRecordingTitle.text = myDataset[position].title
-            holder.tvDate.text = myDataset[position].date
-            holder.tvDuration.text = myDataset[position].duration
+            val recording = myDataset[position]
+            holder.tvRecordingTitle.text = recording.name
+            holder.tvDate.text = DATE_FORMAT.format(recording.created)
+            holder.tvDuration.text = helpers.timeToString(recording.duration)
         }
 
         // Return the number of recordings in the list
         override fun getItemCount() = myDataset.size
-    }
-
-    fun createDummyRecordings(num: Int) : Array<Recording>{
-        //do stuff
-        var recordings = Array(num){i -> Recording("Recording "+(i + 1).toString(), "2018/07/"+(i + 1).toString().padStart(2,
-                    '0'), "00:02:31")}
-        return recordings
     }
 
     fun openRecording(view: View) {
@@ -120,5 +115,8 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    companion object {
+        private val DATE_FORMAT = SimpleDateFormat("yyyy/MM/dd")
+    }
 }
 
