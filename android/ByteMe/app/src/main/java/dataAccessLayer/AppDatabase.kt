@@ -27,39 +27,40 @@ abstract class AppDatabase : RoomDatabase() {
         private var INSTANCE: AppDatabase? = null
         private var DUMMY_INSTANCE: AppDatabase? = null
 
+        const val DUMMY_AUDIO_FILE = "/SoundHunt/Albatross - Big Black Bear.mp3"
         private val DUMMY_DATA = arrayOf(
                 RecordingRoom(
                         id = null,
                         name = "CS 446 L01",
-                        path = "/cs446/lectures/L01.mp3",
+                        path = DUMMY_AUDIO_FILE,
                         transcript = null,
                         created = RoomTypeConverters.ISO8601_SDF.parse("2018-05-07T11:36:00-0400"),
                         duration = 48*60*1000 + 45*1000),
                 RecordingRoom(
                         id = null,
                         name = "CS 446 L02",
-                        path = "/cs446/lectures/L02.mp3",
+                        path = DUMMY_AUDIO_FILE,
                         transcript = null,
                         created = RoomTypeConverters.ISO8601_SDF.parse("2018-05-09T11:37:56-0400"),
                         duration = 49*60*1000 + 12*1000),
                 RecordingRoom(
                         id = null,
                         name = "CS 446 L04",
-                        path = "/cs446/lectures/L04.mp3",
+                        path = DUMMY_AUDIO_FILE,
                         transcript = null,
                         created = RoomTypeConverters.ISO8601_SDF.parse("2018-05-12T11:31:32-0400"),
                         duration = 56*60*1000 + 18*1000),
                 RecordingRoom(
                         id = null,
                         name = "My Recording",
-                        path = "/foo/bar.mp3",
+                        path = DUMMY_AUDIO_FILE,
                         transcript = null,
                         created = RoomTypeConverters.ISO8601_SDF.parse("2018-07-11T14:00:00-0400"),
                         duration = 15*60*1000 + 45*1000),
                 RecordingRoom(
                         id = null,
                         name = "My Other Recording",
-                        path = "/foo/bar2.mp3",
+                        path = DUMMY_AUDIO_FILE,
                         transcript = null,
                         created = RoomTypeConverters.ISO8601_SDF.parse("2018-07-13T13:00:00-0400"),
                         duration = 18*60*1000 + 46*1000))

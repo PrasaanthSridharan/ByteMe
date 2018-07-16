@@ -128,7 +128,7 @@ class RecordingActivity : AppCompatActivity() {
     private suspend fun saveRecording(db: AppDatabase): Long {
         val recording = RecordingRoom(
                 id = null,
-                path = "SOME_PATH",
+                path = AppDatabase.DUMMY_AUDIO_FILE,
                 name = model.name,
                 created = model.created,
                 transcript = null,
