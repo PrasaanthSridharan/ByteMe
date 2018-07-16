@@ -9,11 +9,12 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_recording_list"
         android:layout_width="match_parent"
-        android:layout_height="518dp"
+        android:layout_height="0dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/mic_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/mic_button"
