@@ -1,27 +1,31 @@
 package com.example.byteme.byteme
 
-import businessLayer.*
-import helpers.colorFromId
-
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.annotation.ColorInt
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import businessLayer.RecordingFlagRoom
+import businessLayer.RecordingRoom
+import dataAccessLayer.AppDatabase
+import helpers.colorFromId
 import kotlinx.android.synthetic.main.activity_recording.*
 import kotlinx.android.synthetic.main.item_flag.view.*
-import kotlin.collections.ArrayList
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
+import java.util.*
 import kotlin.concurrent.timer
 
 
 /**
  * RecordingFlag Adapter which binds data from the RecordingFlag class into the layout XML
  */
-class RecordingFlagAdapter : ArrayAdapter<RecordingFlag> {
-    constructor(context: Context, items: ArrayList<RecordingFlag>)
+class RecordingFlagAdapter : ArrayAdapter<RecordingFlagModel> {
+    constructor(context: Context, items: ArrayList<RecordingFlagModel>)
             : super(context, 0, items) { }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -53,13 +57,26 @@ val FLAG_BUTTON_COLORS = mapOf(
         R.id.flag5 to R.color.flag_purple
 )
 
+data class RecordingModel(
+        var name: String,
+        var created: Date)
+
+data class RecordingFlagModel(
+        val time: Long, // ms from start of recording
+        @ColorInt val color: Int,
+        var label: String?)
+
 /**
  * The activity class for recording a new... recording
  */
 class RecordingActivity : AppCompatActivity() {
     private lateinit var flagsAdapter : RecordingFlagAdapter
+
+    // UI-relevant fields of the recording
+    private var model = RecordingModel(name = "", created = Date())
+
     private var recordingStart : Long = System.currentTimeMillis()
-    private var flags : ArrayList<RecordingFlag> = arrayListOf()
+    private var flags : ArrayList<RecordingFlagModel> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,21 +85,29 @@ class RecordingActivity : AppCompatActivity() {
         flagsAdapter = RecordingFlagAdapter(this, flags)
         list_flags.adapter = flagsAdapter
 
-        timer("Recording timer",
-                period=1000,
-                action={
-                    text_timer.post {
-                        val time = System.currentTimeMillis() - recordingStart
-                        text_timer.text = helpers.timeToString(time)
-                    }
-                }
-        )
+        launch {
+            val db = AppDatabase.getDummyInstance(this@RecordingActivity)!!
+            model.name = db.recordingDao.getNextRecordingName()
+            launch(UI) { text_title.setText(model.name) }
+        }
+
+        // Sync recording title
+        text_title.onFocusChangeListener = View.OnFocusChangeListener {
+            _, hasFocus -> if (!hasFocus) model.name = text_title.text.toString()
+        }
+
+        timer("Recording timer", period=1000) {
+            text_timer.post {
+                val time = System.currentTimeMillis() - recordingStart
+                text_timer.text = helpers.timeToString(time)
+            }
+        }
     }
 
     fun flagButtonPressed(view: View) {
         val colorId = FLAG_BUTTON_COLORS[view.id]
         val time = System.currentTimeMillis() - recordingStart
-        flagsAdapter.add(RecordingFlag(time, colorFromId(colorId!!), null))
+        flagsAdapter.add(RecordingFlagModel(time, colorFromId(colorId!!), null))
     }
 
     fun stopButtonPressed(view: View) {
@@ -90,6 +115,40 @@ class RecordingActivity : AppCompatActivity() {
         // To pass any data to next activity
         //intent.putExtra("keyIdentifier", value)
         // start your next activity
-        startActivity(intent)
+
+        launch {
+            val db = AppDatabase.getDummyInstance(this@RecordingActivity)!!
+            val recordingId = saveRecording(db)
+            saveFlags(db, recordingId)
+
+            launch (UI) { startActivity(intent) }
+        }
+    }
+
+    private suspend fun saveRecording(db: AppDatabase): Long {
+        val recording = RecordingRoom(
+                id = null,
+                path = AppDatabase.DUMMY_AUDIO_FILE,
+                name = model.name,
+                created = model.created,
+                transcript = null,
+                duration = System.currentTimeMillis() - recordingStart
+        )
+
+        return db.recordingDao.insert(recording)
+    }
+
+    private suspend fun saveFlags(db: AppDatabase, recordingId: Long) {
+        val roomFlags = flags.map { model ->
+            RecordingFlagRoom(
+                    id = null,
+                    recordingId = recordingId,
+                    label = model.label,
+                    color = model.color,
+                    time = model.time
+            )
+        }
+
+        db.recordingFlagDao.insert(roomFlags)
     }
 }

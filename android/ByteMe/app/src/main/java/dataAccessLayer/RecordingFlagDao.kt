@@ -5,19 +5,24 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
 import android.arch.persistence.room.Query
 import businessLayer.RecordingFlagRoom
-import businessLayer.RecordingRoom
 
 @Dao
-interface RecordingFlagDao {
+abstract class RecordingFlagDao {
+    @Query("SELECT * from recording_flags where recording_id = :recordingId ORDER BY time ASC")
+    abstract fun getForRecording(recordingId: Long): List<RecordingFlagRoom>
+
     @Query("SELECT * from recording_flags")
-    fun getAll(): List<RecordingFlagRoom>
+    abstract fun getAll(): List<RecordingFlagRoom>
 
     @Insert(onConflict = REPLACE)
-    fun insert(flag: RecordingFlagRoom)
+    abstract fun insert(flag: RecordingFlagRoom)
+
+    @Insert(onConflict = REPLACE)
+    abstract fun insert(flag: Collection<RecordingFlagRoom>)
 
     @Query("DELETE from recording_flags")
-    fun deleteAll()
+    abstract fun deleteAll()
 
     @Query("SELECT * from recording_flags WHERE label LIKE :query")
-    fun search(query: String): List<RecordingFlagRoom>
+    abstract fun search(query: String): List<RecordingFlagRoom>
 }

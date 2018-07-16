@@ -4,25 +4,48 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
 import android.arch.persistence.room.Query
+import android.database.Cursor
 import businessLayer.RecordingRoom
+import helpers.DefaultRecordingName
 
 @Dao
-interface RecordingDao {
+abstract class RecordingDao {
+    @Query("SELECT * from recordings WHERE id = :id")
+    abstract fun get(id: Long): RecordingRoom
+
     @Query("SELECT * from recordings ORDER BY created DESC")
-    fun getAll(): List<RecordingRoom>
+    abstract fun getAll(): List<RecordingRoom>
 
     @Insert(onConflict = REPLACE)
-    fun insert(recording: RecordingRoom)
+    abstract fun insert(recording: RecordingRoom): Long
 
     @Insert(onConflict = REPLACE)
-    fun insert(recordings: Array<RecordingRoom>)
+    abstract fun insert(recordings: Array<RecordingRoom>)
 
     @Query("DELETE from recordings")
-    fun deleteAll()
+    abstract fun deleteAll()
 
     @Query("SELECT * from recordings WHERE transcript LIKE :query")
-    fun searchTranscripts(query: String): List<RecordingRoom>
+    abstract fun searchTranscripts(query: String): List<RecordingRoom>
 
     @Query("UPDATE recordings SET transcript = :transcript WHERE id = :recordingId")
-    fun addTranscript(recordingId: Long, transcript: String)
+    abstract fun addTranscript(recordingId: Long, transcript: String)
+
+    @Query("SELECT name FROM recordings WHERE name LIKE 'Recording ____' ORDER BY name DESC")
+    protected abstract fun getLargestRecordingName(): Cursor
+
+    fun getNextRecordingName(): String {
+        val recNamesCursor = getLargestRecordingName()
+        if (recNamesCursor.moveToFirst()) {
+            do {
+                val name = recNamesCursor.getString(0)
+                if (DefaultRecordingName.regex.matches(name)) {
+                    val lastNum = name.split(' ')[1].toInt()
+                    return DefaultRecordingName.ithName(lastNum + 1)
+                }
+            } while (recNamesCursor.moveToNext())
+        }
+
+        return DefaultRecordingName.ithName(0)
+    }
 }
