@@ -1,28 +1,30 @@
 package com.example.byteme.byteme
 
-import businessLayer.*
-
-import android.support.v7.app.AppCompatActivity
+import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.os.Handler
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.media.MediaPlayer
-import android.net.Uri
-import android.os.Environment
-import android.os.Handler
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import helpers.colorFromId
+import businessLayer.RecordingFlagRoom
+import businessLayer.RecordingRoom
+import dataAccessLayer.AppDatabase
 import kotlinx.android.synthetic.main.playback_bookmarks_list.view.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 
-
-val audioFile = "/SmartVoiceRecorder/Record_0001.wav"
 
 class PlaybackActivity : AppCompatActivity() {
+    private lateinit var recording: RecordingRoom
+    private lateinit var flags: List<RecordingFlagRoom>
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -32,12 +34,22 @@ class PlaybackActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_playback)
 
-        val musicData = Uri.parse (Environment.getExternalStorageDirectory().getPath ()
-                + audioFile)
-        val mp = MediaPlayer.create (this, musicData)
+        val recordingId = this.intent.extras["recording_id"] as Long
 
-        setupAudio(mp)
-        setupBookmarks(mp)
+        launch {
+            val db = AppDatabase.getDummyInstance(this@PlaybackActivity)!!
+            recording = db.recordingDao.get(recordingId)
+            flags = db.recordingFlagDao.getForRecording(recordingId)
+
+            val fullPath = Environment.getExternalStorageDirectory().path + recording.path
+            val musicData = Uri.parse(fullPath)
+            val mp = MediaPlayer.create(this@PlaybackActivity, musicData)
+
+            launch(UI) {
+                setupAudio(mp)
+                setupBookmarks(mp)
+            }
+        }
     }
 
     fun setupAudio(mp: MediaPlayer) {
@@ -97,11 +109,7 @@ class PlaybackActivity : AppCompatActivity() {
         viewManager = LinearLayoutManager(this)
         //rv_recording_list.layoutManager = LinearLayoutManager(this)
 
-        val data = arrayOf(RecordingFlag(10000, colorFromId(R.color.flag_red), "flag1"),
-                RecordingFlag(23000, colorFromId(R.color.flag_green), "flag2"),
-                RecordingFlag(29000, colorFromId(R.color.flag_purple), "flag3"))
-
-        viewAdapter = PlaybackAdapter(data, fun (time) {
+        viewAdapter = PlaybackAdapter(flags, fun (time) {
             if (time <= mp.duration) {
                 mp.seekTo(time.toInt())
                 mp.start()
@@ -121,7 +129,7 @@ class PlaybackActivity : AppCompatActivity() {
     }
 }
 
-class PlaybackAdapter(private val myDataset: Array<RecordingFlag>,
+class PlaybackAdapter(private val myDataset: List<RecordingFlagRoom>,
                       private val onBookmarkPlayPress: (time: Long) -> Unit) :
         RecyclerView.Adapter<PlaybackAdapter.ViewHolder>() {
 

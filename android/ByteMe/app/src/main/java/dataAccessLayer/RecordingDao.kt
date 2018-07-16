@@ -10,6 +10,9 @@ import helpers.DefaultRecordingName
 
 @Dao
 abstract class RecordingDao {
+    @Query("SELECT * from recordings WHERE id = :id")
+    abstract fun get(id: Long): RecordingRoom
+
     @Query("SELECT * from recordings ORDER BY created DESC")
     abstract fun getAll(): List<RecordingRoom>
 

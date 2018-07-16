@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity() {
 
         class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             // Holds the view that will add each recording title
+            val container = view.linearLayout
             val tvRecordingTitle = view.tv_recording_title
             val tvDate = view.tv_date
             val tvDuration = view.tv_duration
@@ -98,6 +99,7 @@ class MainActivity : AppCompatActivity() {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
             val recording = myDataset[position]
+            holder.container.tag = recording.id
             holder.tvRecordingTitle.text = recording.name
             holder.tvDate.text = DATE_FORMAT.format(recording.created)
             holder.tvDuration.text = helpers.timeToString(recording.duration)
@@ -110,7 +112,7 @@ class MainActivity : AppCompatActivity() {
     fun openRecording(view: View) {
         val intent = Intent(this, PlaybackActivity::class.java)
         // To pass any data to next activity
-        //intent.putExtra("keyIdentifier", value)
+        intent.putExtra("recording_id", view.tag as Long)
         // start your next activity
         startActivity(intent)
     }

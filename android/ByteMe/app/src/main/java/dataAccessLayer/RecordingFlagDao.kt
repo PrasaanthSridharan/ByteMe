@@ -8,6 +8,9 @@ import businessLayer.RecordingFlagRoom
 
 @Dao
 abstract class RecordingFlagDao {
+    @Query("SELECT * from recording_flags where recording_id = :recordingId ORDER BY time ASC")
+    abstract fun getForRecording(recordingId: Long): List<RecordingFlagRoom>
+
     @Query("SELECT * from recording_flags")
     abstract fun getAll(): List<RecordingFlagRoom>
 
