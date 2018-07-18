@@ -25,4 +25,7 @@ abstract class RecordingFlagDao {
 
     @Query("SELECT * from recording_flags WHERE label LIKE :query")
     abstract fun search(query: String): List<RecordingFlagRoom>
+
+    @Query("SELECT * from recording_flags WHERE label LIKE :query AND recording_id = :recordingId")
+    abstract fun searchRecording(recordingId: Long, query: String): List<RecordingFlagRoom>
 }
