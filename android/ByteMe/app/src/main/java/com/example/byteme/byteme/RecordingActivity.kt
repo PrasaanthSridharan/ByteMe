@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import businessLayer.RecordingFlagRoom
 import businessLayer.RecordingRoom
+import businessLayer.TranscriptionJobService
 import dataAccessLayer.AppDatabase
 import helpers.colorFromId
 import kotlinx.android.synthetic.main.activity_recording.*
@@ -59,7 +60,8 @@ val FLAG_BUTTON_COLORS = mapOf(
 
 data class RecordingModel(
         var name: String,
-        var created: Date)
+        var created: Date,
+        var path: String)
 
 data class RecordingFlagModel(
         val time: Long, // ms from start of recording
@@ -73,7 +75,7 @@ class RecordingActivity : AppCompatActivity() {
     private lateinit var flagsAdapter : RecordingFlagAdapter
 
     // UI-relevant fields of the recording
-    private var model = RecordingModel(name = "", created = Date())
+    private var model = RecordingModel(name = "", created = Date(), path = AppDatabase.DUMMY_AUDIO_FILE)
 
     private var recordingStart : Long = System.currentTimeMillis()
     private var flags : ArrayList<RecordingFlagModel> = arrayListOf()
@@ -117,9 +119,11 @@ class RecordingActivity : AppCompatActivity() {
         // start your next activity
 
         launch {
-            val db = AppDatabase.getDummyInstance(this@RecordingActivity)!!
+            val context = this@RecordingActivity
+            val db = AppDatabase.getDummyInstance(context)!!
             val recordingId = saveRecording(db)
             saveFlags(db, recordingId)
+            TranscriptionJobService.scheduleTranscriptionJob(context, recordingId, model.path)
 
             launch (UI) { startActivity(intent) }
         }
@@ -128,7 +132,7 @@ class RecordingActivity : AppCompatActivity() {
     private suspend fun saveRecording(db: AppDatabase): Long {
         val recording = RecordingRoom(
                 id = null,
-                path = AppDatabase.DUMMY_AUDIO_FILE,
+                path = model.path,
                 name = model.name,
                 created = model.created,
                 transcript = null,
