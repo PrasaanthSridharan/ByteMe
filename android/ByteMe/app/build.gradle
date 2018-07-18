@@ -6,6 +6,13 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt' // necessary for Room?
 
+// Load a property by key from local.properties
+def getLocalProperty(key) {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty(key);
+}
+
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -15,6 +22,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "GCLOUD_API_KEY", "\""+getLocalProperty("gcloud_api_key")+"\""
     }
     buildTypes {
         release {
