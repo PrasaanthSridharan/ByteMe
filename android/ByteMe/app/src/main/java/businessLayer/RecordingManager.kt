@@ -9,7 +9,6 @@ import java.util.*
 
 object RecordingManager {
 
-    private const val ROOT_PATH: String = "/storage/emulated/0/"
     private const val FILE_EXTENSION: String = "3gp"
 
     private var mediaRecorder: MediaRecorder? = null
@@ -20,18 +19,17 @@ object RecordingManager {
     private var isRecording = false
 
 
+
+
     /**
      * Initializes the //TODO: Finish documentation here
      * Sets null to following instances: [mediaPlayer], [mediaRecorder], [audioFilePath]
      * Sets false to following instances: [isRecording]
      */
     fun init(fileDirectory: String) {
-        mediaPlayer = null
-        mediaRecorder = null
-        audioFilePath = null
-        isRecording = false
+        audioFileDir = File(fileDirectory, "sound_hunt").toString()
 
-        audioFileDir = ROOT_PATH
+        if(!File(audioFileDir).isDirectory) File(audioFileDir).mkdir()
     }
 
     /**
@@ -40,11 +38,7 @@ object RecordingManager {
      */
     fun recordAudio( ):String {
         val audioName = UUID.randomUUID().toString()
-        audioFilePath = File(ROOT_PATH, "$audioName.$FILE_EXTENSION").toString()
-
-        // Todo: Refactor Start ---
-       Log.d("FILE", audioFilePath)
-        // Todo: Refactor End -----
+        audioFilePath = File(audioFileDir, "$audioName.$FILE_EXTENSION").toString()
 
         isRecording = true
 
