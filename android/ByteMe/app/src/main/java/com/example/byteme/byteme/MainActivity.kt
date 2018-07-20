@@ -1,7 +1,11 @@
 package com.example.byteme.byteme
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -23,6 +27,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
 
+    private val RECORD_REQUEST_CODE = 101
+    private val STORAGE_REQUEST_CODE = 102
+
     // dataset of dummy recording titles
     /*
     val myDataset = arrayOf("Meeting", "Fri_scrum", "Mon_scrum", "Lecture", "Interview",
@@ -35,6 +42,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // TODO: Fix me, this isn't fully correct ---
+        requestPermission(Manifest.permission.RECORD_AUDIO,
+                RECORD_REQUEST_CODE)
+        requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                STORAGE_REQUEST_CODE)
+        // TODO: fix me ends here ---
+
 
         viewManager = LinearLayoutManager(this)
         //rv_recording_list.layoutManager = LinearLayoutManager(this)
@@ -65,6 +80,17 @@ class MainActivity : AppCompatActivity() {
         micButton.setOnClickListener {
             val intent = Intent(this, RecordingActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun requestPermission(permissionType: String, requestCode: Int) {
+        val permission = ContextCompat.checkSelfPermission(this,
+                permissionType)
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(permissionType), requestCode
+            )
         }
     }
 

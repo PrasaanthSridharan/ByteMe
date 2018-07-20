@@ -3,12 +3,16 @@ package com.example.byteme.byteme
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Environment
 import android.support.annotation.ColorInt
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import businessLayer.RecordingFlag
+import helpers.businessLayer.RecordingManager
+import helpers.colorFromId
 import businessLayer.RecordingFlagRoom
 import businessLayer.RecordingRoom
 import businessLayer.TranscriptionJobService
@@ -87,6 +91,9 @@ class RecordingActivity : AppCompatActivity() {
         flagsAdapter = RecordingFlagAdapter(this, flags)
         list_flags.adapter = flagsAdapter
 
+        RecordingManager.init(Environment.getExternalStorageDirectory().absolutePath)
+        val path = RecordingManager.recordAudio()
+
         launch {
             val db = AppDatabase.getDummyInstance(this@RecordingActivity)!!
             model.name = db.recordingDao.getNextRecordingName()
@@ -117,6 +124,8 @@ class RecordingActivity : AppCompatActivity() {
         // To pass any data to next activity
         //intent.putExtra("keyIdentifier", value)
         // start your next activity
+
+        RecordingManager.stopAudio()  // Stop Recording
 
         launch {
             val context = this@RecordingActivity
