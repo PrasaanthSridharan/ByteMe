@@ -10,13 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import businessLayer.RecordingFlag
-import helpers.businessLayer.RecordingManager
-import helpers.colorFromId
 import businessLayer.RecordingFlagRoom
 import businessLayer.RecordingRoom
 import businessLayer.TranscriptionJobService
 import dataAccessLayer.AppDatabase
+import helpers.businessLayer.RecordingManager
 import helpers.colorFromId
 import kotlinx.android.synthetic.main.activity_recording.*
 import kotlinx.android.synthetic.main.item_flag.view.*
@@ -79,7 +77,8 @@ class RecordingActivity : AppCompatActivity() {
     private lateinit var flagsAdapter : RecordingFlagAdapter
 
     // UI-relevant fields of the recording
-    private var model = RecordingModel(name = "", created = Date(), path = AppDatabase.DUMMY_AUDIO_FILE)
+    private var model = RecordingModel(name = "", created = Date(),
+            path = AppDatabase.DUMMY_AUDIO_FILE)
 
     private var recordingStart : Long = System.currentTimeMillis()
     private var flags : ArrayList<RecordingFlagModel> = arrayListOf()
@@ -92,7 +91,7 @@ class RecordingActivity : AppCompatActivity() {
         list_flags.adapter = flagsAdapter
 
         RecordingManager.init(Environment.getExternalStorageDirectory().absolutePath)
-        val path = RecordingManager.recordAudio()
+        model.path = RecordingManager.recordAudio()
 
         launch {
             val db = AppDatabase.getDummyInstance(this@RecordingActivity)!!

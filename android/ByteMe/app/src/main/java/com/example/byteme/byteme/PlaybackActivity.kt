@@ -41,8 +41,7 @@ class PlaybackActivity : AppCompatActivity() {
             recording = db.recordingDao.get(recordingId)
             flags = db.recordingFlagDao.getForRecording(recordingId)
 
-            val fullPath = Environment.getExternalStorageDirectory().path + recording.path
-            val musicData = Uri.parse(fullPath)
+            val musicData = Uri.parse(recording.path)
             val mp = MediaPlayer.create(this@PlaybackActivity, musicData)
 
             launch(UI) {
