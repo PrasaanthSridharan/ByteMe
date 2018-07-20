@@ -1,63 +1,35 @@
 package com.example.byteme.byteme
 
-import android.Manifest
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
+import android.provider.Settings.System.DATE_FORMAT
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import businessLayer.RecordingRoom
 import dataAccessLayer.AppDatabase
 import kotlinx.android.synthetic.main.recording_list_item.view.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
-import java.text.SimpleDateFormat
 
-
-class MainActivity : AppCompatActivity() {
+class SearchActivity : AppCompatActivity() {
     private lateinit var db: AppDatabase
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
 
-    private val RECORD_REQUEST_CODE = 101
-    private val STORAGE_REQUEST_CODE = 102
-
-    // dataset of dummy recording titles
-    /*
-    private val myDataset = arrayOf("Meeting", "Fri_scrum", "Mon_scrum", "Lecture", "Interview",
-            "Approval", "Brainstorming")
-    */
-
     private var myDataset: MutableList<RecordingRoom> = mutableListOf()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        //setContentView(R.layout.activity_search)
-
-        // TODO: Fix me, this isn't fully correct ---
-        requestPermission(Manifest.permission.RECORD_AUDIO,
-                RECORD_REQUEST_CODE)
-        requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                STORAGE_REQUEST_CODE)
-        // TODO: fix me ends here ---
-
+        setContentView(R.layout.activity_search)
 
         viewManager = LinearLayoutManager(this)
-        //rv_recording_list.layoutManager = LinearLayoutManager(this)
+        viewAdapter = SearchAdapter(myDataset)
 
-        viewAdapter = RecordingAdapter(myDataset)
-
-        recyclerView = findViewById<RecyclerView>(R.id.rv_recording_list).apply {
+        recyclerView = findViewById<RecyclerView>(R.id.rv_search_list).apply {
             // changes in content do not change the layout size of the RecyclerView
             setHasFixedSize(true)
 
@@ -69,33 +41,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         launch {
-            db = AppDatabase.getInstance(this@MainActivity)!!
+//            db = AppDatabase.getInstance(this@MainActivity)!!
+            db = AppDatabase.getDummyInstance(this@SearchActivity)!!
 
             myDataset.addAll(db.recordingDao.getAll())
             launch(UI) { viewAdapter.notifyDataSetChanged() }
         }
-
-        val micButton = findViewById<ImageButton>(R.id.mic_button)
-
-        micButton.setOnClickListener {
-            val intent = Intent(this, RecordingActivity::class.java)
-            startActivity(intent)
-        }
     }
 
-    private fun requestPermission(permissionType: String, requestCode: Int) {
-        val permission = ContextCompat.checkSelfPermission(this,
-                permissionType)
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    arrayOf(permissionType), requestCode
-            )
-        }
-    }
-
-    private class RecordingAdapter(private val myDataset: MutableList<RecordingRoom>) :
-            RecyclerView.Adapter<RecordingAdapter.ViewHolder>() {
+    private class SearchAdapter(private val myDataset: MutableList<RecordingRoom>) :
+            RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
 
         // Provide a reference to the views for each data item
         // Complex data items may need more than one view per item, and
@@ -113,7 +68,7 @@ class MainActivity : AppCompatActivity() {
 
         // Create new views (invoked by the layout manager)
         override fun onCreateViewHolder(parent: ViewGroup,
-                                        viewType: Int): RecordingAdapter.ViewHolder {
+                                        viewType: Int): SearchAdapter.ViewHolder {
             // create a new view
             val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.recording_list_item, parent, false)
@@ -134,17 +89,4 @@ class MainActivity : AppCompatActivity() {
         // Return the number of recordings in the list
         override fun getItemCount() = myDataset.size
     }
-
-    fun openRecording(view: View) {
-        val intent = Intent(this, PlaybackActivity::class.java)
-        // To pass any data to next activity
-        intent.putExtra("recording_id", view.tag as Long)
-        // start your next activity
-        startActivity(intent)
-    }
-
-    companion object {
-        private val DATE_FORMAT = SimpleDateFormat("yyyy/MM/dd")
-    }
 }
-

@@ -16,17 +16,17 @@
         android:theme="@style/AppTheme">
 
         <!-- Activities -->
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"/>
+        <activity
+            android:name=".RecordingActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".PlaybackActivity"/>
+        <activity android:name=".SearchActivity">
+            <!-- Cut and paste this intent-filter to set launch activity -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".RecordingActivity"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
-        <activity android:name=".PlaybackActivity">
         </activity>
 
         <!-- Services -->
