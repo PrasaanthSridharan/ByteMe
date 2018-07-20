@@ -1,5 +1,6 @@
 package com.example.byteme.byteme
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings.System.DATE_FORMAT
@@ -14,7 +15,7 @@ import kotlinx.android.synthetic.main.recording_list_item.view.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 
-class SearchActivity : AppCompatActivity() {
+class SearchableActivity : AppCompatActivity() {
     private lateinit var db: AppDatabase
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -42,7 +43,7 @@ class SearchActivity : AppCompatActivity() {
 
         launch {
 //            db = AppDatabase.getInstance(this@MainActivity)!!
-            db = AppDatabase.getDummyInstance(this@SearchActivity)!!
+            db = AppDatabase.getDummyInstance(this@SearchableActivity)!!
 
             myDataset.addAll(db.recordingDao.getAll())
             launch(UI) { viewAdapter.notifyDataSetChanged() }
@@ -88,5 +89,13 @@ class SearchActivity : AppCompatActivity() {
 
         // Return the number of recordings in the list
         override fun getItemCount() = myDataset.size
+    }
+
+    fun openRecording(view: View) {
+        val intent = Intent(this, PlaybackActivity::class.java)
+        // To pass any data to next activity
+        intent.putExtra("recording_id", view.tag as Long)
+        // start your next activity
+        startActivity(intent)
     }
 }

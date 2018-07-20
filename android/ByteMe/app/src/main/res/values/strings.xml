@@ -7,4 +7,5 @@
     <string name="done_button">Done</string>
     <string name="play_button">Play</string>
     <string name="bookmark">bookmark</string>
+    <string name="search_hint">Search for recordings</string>
 </resources>
