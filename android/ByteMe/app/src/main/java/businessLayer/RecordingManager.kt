@@ -1,64 +1,61 @@
 package helpers.businessLayer
 
+import android.media.AudioFormat
 import android.media.MediaPlayer
 import android.media.MediaRecorder
+import android.os.Environment
 import android.util.Log
+import omrecorder.*
 import java.io.File
 import java.util.*
 
 
 object RecordingManager {
+    private const val TAG = "RecordingManager"
+    private const val FILE_EXTENSION: String = "wav"
 
-    private const val FILE_EXTENSION: String = "3gp"
-
-    private var mediaRecorder: MediaRecorder? = null
+    private var recorder: Recorder? = null
     private var mediaPlayer: MediaPlayer? = null
 
     private var audioFilePath: String? = null
     private var audioFileDir: String? = null
     private var isRecording = false
 
-
-
-
     /**
-     * Initializes the //TODO: Finish documentation here
-     * Sets null to following instances: [mediaPlayer], [mediaRecorder], [audioFilePath]
-     * Sets false to following instances: [isRecording]
+     * Initializes the manager. Call before using.
      */
-    fun init(fileDirectory: String) {
-        audioFileDir = File(fileDirectory, "sound_hunt").toString()
+    fun init() {
+        val externalDirectory = Environment.getExternalStorageDirectory().path
+        audioFileDir = File(externalDirectory, "sound_hunt").path
 
         if(!File(audioFileDir).isDirectory) File(audioFileDir).mkdir()
     }
 
     /**
-     * Starts the audio record process to output to file specified by [audioName] without a file
-     * extension.
+     * Starts the audio record process to a new (random) file in the [audioFileDir]
      */
-    fun recordAudio( ):String {
+    fun recordAudio(): String {
         val audioName = UUID.randomUUID().toString()
-        audioFilePath = File(audioFileDir, "$audioName.$FILE_EXTENSION").toString()
+        val audioFile = File(audioFileDir, "$audioName.$FILE_EXTENSION")
+        audioFilePath = audioFile.path
 
         isRecording = true
 
-        try {
-            mediaRecorder = MediaRecorder()!!.apply {
-                setAudioSource(MediaRecorder.AudioSource.MIC)
-                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-                setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-                setOutputFile(audioFilePath)
-                prepare()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.e("recordAudio(...)", "Recording error!")
+        val audioSource = PullableSource.Default(
+            AudioRecordConfig.Default(
+                    MediaRecorder.AudioSource.MIC,
+                    AudioFormat.ENCODING_PCM_16BIT,
+                    AudioFormat.CHANNEL_IN_MONO,
+                    16000
+            )
+        )
+
+        Log.d(TAG, "Recording now...")
+        recorder = OmRecorder.wav(PullTransport.Default(audioSource), audioFile).apply {
+            startRecording()
         }
 
-        mediaRecorder?.start()
-        Log.e("recordAudio(...)", "Recording now...")
-
-        return audioFilePath!!
+        return audioFile.path
     }
 
     /**
@@ -67,15 +64,13 @@ object RecordingManager {
     fun stopAudio() {
 
         if (isRecording) {
-            mediaRecorder?.stop()
-            mediaRecorder?.release()
-            mediaRecorder = null
+            recorder!!.stopRecording()
             isRecording = false
-            Log.e("stopAudio()", "Recording stopped.")
+            Log.d(TAG, "Recording stopped.")
         } else {
             mediaPlayer?.release()
             mediaPlayer = null
-            Log.e("stopAudio()", "Playback stopped.")
+            Log.d(TAG, "Playback stopped.")
         }
     }
 
@@ -85,8 +80,8 @@ object RecordingManager {
     fun playAudio(fileNameWithExtension:String) {
         val fullFilePath = File(audioFileDir, fileNameWithExtension).toString()
 
-        Log.e("playAudio(...)", "fileNameWithExtension: $fullFilePath")
-        Log.e("playAudio(...)", "audioFileDir: $audioFileDir")
+        Log.d(TAG, "fileNameWithExtension: $fullFilePath")
+        Log.d(TAG, "audioFileDir: $audioFileDir")
         mediaPlayer = MediaPlayer()
         mediaPlayer?.setDataSource(File(audioFileDir, fileNameWithExtension).toString())
         mediaPlayer?.prepare()

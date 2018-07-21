@@ -27,7 +27,7 @@ abstract class AppDatabase : RoomDatabase() {
         private var INSTANCE: AppDatabase? = null
         private var DUMMY_INSTANCE: AppDatabase? = null
 
-        const val DUMMY_AUDIO_FILE = "/SoundHunt/Albatross - Big Black Bear.mp3"
+        const val DUMMY_AUDIO_FILE = "/sdcard/SoundHunt/Albatross - Big Black Bear.mp3"
         private val DUMMY_DATA = arrayOf(
                 RecordingRoom(
                         id = null,
