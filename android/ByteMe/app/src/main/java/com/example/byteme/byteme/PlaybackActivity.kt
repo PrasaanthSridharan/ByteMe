@@ -1,5 +1,6 @@
 package com.example.byteme.byteme
 
+import android.graphics.Typeface
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -14,9 +15,11 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.TextView
 import businessLayer.RecordingFlagRoom
 import businessLayer.RecordingRoom
 import dataAccessLayer.AppDatabase
+import kotlinx.android.synthetic.main.activity_playback.*
 import kotlinx.android.synthetic.main.playback_bookmarks_list.view.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
@@ -36,6 +39,8 @@ class PlaybackActivity : AppCompatActivity() {
 
         val recordingId = this.intent.extras["recording_id"] as Long
 
+        setupTabs()
+
         launch {
             val db = AppDatabase.getDummyInstance(this@PlaybackActivity)!!
             recording = db.recordingDao.get(recordingId)
@@ -47,7 +52,32 @@ class PlaybackActivity : AppCompatActivity() {
             launch(UI) {
                 setupAudio(mp)
                 setupBookmarks(mp)
+                setupTranscript(recording.transcript)
             }
+        }
+    }
+
+    private fun setupTranscript(transcript: String?) {
+        if (transcript == null)
+            tv_transcript.apply {
+                text = "Transcription in progress..."
+                textAlignment = TextView.TEXT_ALIGNMENT_CENTER
+                setTypeface(typeface, Typeface.ITALIC)
+            }
+        else tv_transcript.text = transcript
+    }
+
+    private fun setupTabs() {
+        tab_host.apply {
+            setup()
+            addTab(newTabSpec("Flags").apply {
+                setContent(R.id.tab1)
+                setIndicator("Flags")
+            })
+            addTab(newTabSpec("Transcript").apply {
+                setContent(R.id.tab2)
+                setIndicator("Transcript")
+            })
         }
     }
 
@@ -163,9 +193,9 @@ class PlaybackAdapter(private val myDataset: List<RecordingFlagRoom>,
         holder.tvBookmarkTime.text = helpers.timeToString(myDataset[position].time)
         holder.flagIcon.setColorFilter(myDataset[position].color)
 
-        holder.playButton.setOnClickListener({
+        holder.playButton.setOnClickListener {
             onBookmarkPlayPress(myDataset[position].time)
-        })
+        }
     }
 
     // Return the number of recordings in the list

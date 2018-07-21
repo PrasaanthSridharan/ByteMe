@@ -52,4 +52,7 @@ dependencies {
 
     // Better audio recording quality
     implementation 'com.kailashdabhi:om-recorder:1.1.5'
+
+    // Tab view
+    implementation 'com.android.support:design:27.1.1'
 }
