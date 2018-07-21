@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets
 object SpeechClient {
     private const val TAG = "SpeechClient"
 
-    private const val USE_DUMMY = true
+    private const val USE_DUMMY = false
     private val DUMMY_RESULT = SpeechRecognitionResult(transcript="hello world record to text with words", confidence=0.96601915, words=arrayListOf(WordInfo(start=700, end=1300, word="hello"), WordInfo(start=1300, end=1600, word="world"), WordInfo(start=1600, end=2600, word="record"), WordInfo(start=2600, end=2800, word="to"), WordInfo(start=2800, end=3600, word="text"), WordInfo(start=3600, end=3800, word="with"), WordInfo(start=3800, end=4600, word="words")))
 
     fun recognize(wavFile: String, forceRequest: Boolean = false): SpeechRecognitionResult {
@@ -35,30 +35,13 @@ object SpeechClient {
     }
 
     /**
-     * The API supports more than these, but these are probably the only we'd need.
-     */
-    enum class SupportedFormats { WAV, AMR_NB }
-
-    /**
      * Note the API requires that the file be mono-channel.
      */
-    private fun googleSpeechApiRecognize(
-            path: String,
-            format: SupportedFormats = SupportedFormats.AMR_NB
-    ): String {
+    private fun googleSpeechApiRecognize(path: String): String {
         val base64 = Base64.encodeToString(FileInputStream(path).readBytes(), Base64.NO_WRAP)
-
-        val encodingConfig = when (format) {
-            SpeechClient.SupportedFormats.WAV -> ""
-            SpeechClient.SupportedFormats.AMR_NB -> """
-                "encoding": "AMR",
-                "sampleRateHertz": 8000,
-            """.trimIndent()
-        }
 
         val body = """{
             "config": {
-                $encodingConfig
                "languageCode": "en-US",
                "enableWordTimeOffsets": true
             },
