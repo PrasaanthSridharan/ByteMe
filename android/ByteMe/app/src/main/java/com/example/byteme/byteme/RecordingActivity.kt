@@ -90,7 +90,7 @@ class RecordingActivity : AppCompatActivity() {
         flagsAdapter = RecordingFlagAdapter(this, flags)
         list_flags.adapter = flagsAdapter
 
-        RecordingManager.init(Environment.getExternalStorageDirectory().absolutePath)
+        RecordingManager.init()
         model.path = RecordingManager.recordAudio()
 
         launch {

@@ -2,13 +2,14 @@ package helpers.businessLayer
 
 import android.media.MediaPlayer
 import android.media.MediaRecorder
+import android.os.Environment
 import android.util.Log
 import java.io.File
 import java.util.*
 
 
 object RecordingManager {
-
+    private const val TAG = "RecordingManager"
     private const val FILE_EXTENSION: String = "3gp"
 
     private var mediaRecorder: MediaRecorder? = null
@@ -22,12 +23,11 @@ object RecordingManager {
 
 
     /**
-     * Initializes the //TODO: Finish documentation here
-     * Sets null to following instances: [mediaPlayer], [mediaRecorder], [audioFilePath]
-     * Sets false to following instances: [isRecording]
+     * Initializes the manager. Call before using.
      */
-    fun init(fileDirectory: String) {
-        audioFileDir = File(fileDirectory, "sound_hunt").toString()
+    fun init() {
+        val externalDirectory = Environment.getExternalStorageDirectory().path
+        audioFileDir = File(externalDirectory, "sound_hunt").path
 
         if(!File(audioFileDir).isDirectory) File(audioFileDir).mkdir()
     }
@@ -52,11 +52,11 @@ object RecordingManager {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("recordAudio(...)", "Recording error!")
+            Log.d(TAG, "Recording error!")
         }
 
         mediaRecorder?.start()
-        Log.e("recordAudio(...)", "Recording now...")
+        Log.d(TAG, "Recording now...")
 
         return audioFilePath!!
     }
@@ -71,11 +71,11 @@ object RecordingManager {
             mediaRecorder?.release()
             mediaRecorder = null
             isRecording = false
-            Log.e("stopAudio()", "Recording stopped.")
+            Log.d(TAG, "Recording stopped.")
         } else {
             mediaPlayer?.release()
             mediaPlayer = null
-            Log.e("stopAudio()", "Playback stopped.")
+            Log.d(TAG, "Playback stopped.")
         }
     }
 
@@ -85,8 +85,8 @@ object RecordingManager {
     fun playAudio(fileNameWithExtension:String) {
         val fullFilePath = File(audioFileDir, fileNameWithExtension).toString()
 
-        Log.e("playAudio(...)", "fileNameWithExtension: $fullFilePath")
-        Log.e("playAudio(...)", "audioFileDir: $audioFileDir")
+        Log.d(TAG, "fileNameWithExtension: $fullFilePath")
+        Log.d(TAG, "audioFileDir: $audioFileDir")
         mediaPlayer = MediaPlayer()
         mediaPlayer?.setDataSource(File(audioFileDir, fileNameWithExtension).toString())
         mediaPlayer?.prepare()
