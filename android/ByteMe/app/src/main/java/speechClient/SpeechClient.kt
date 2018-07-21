@@ -1,6 +1,5 @@
 package speechClient
 
-import android.os.Environment
 import android.util.Base64
 import android.util.Log
 import com.example.byteme.byteme.BuildConfig
@@ -35,17 +34,36 @@ object SpeechClient {
         }
     }
 
-    private fun googleSpeechApiRecognize(wavFile: String): String {
-        val path = Environment.getExternalStorageDirectory().path + wavFile
-        val wavString = Base64.encodeToString(FileInputStream(path).readBytes(), Base64.NO_WRAP)
+    /**
+     * The API supports more than these, but these are probably the only we'd need.
+     */
+    enum class SupportedFormats { WAV, AMR_NB }
+
+    /**
+     * Note the API requires that the file be mono-channel.
+     */
+    private fun googleSpeechApiRecognize(
+            path: String,
+            format: SupportedFormats = SupportedFormats.AMR_NB
+    ): String {
+        val base64 = Base64.encodeToString(FileInputStream(path).readBytes(), Base64.NO_WRAP)
+
+        val encodingConfig = when (format) {
+            SpeechClient.SupportedFormats.WAV -> ""
+            SpeechClient.SupportedFormats.AMR_NB -> """
+                "encoding": "AMR",
+                "sampleRateHertz": 8000,
+            """.trimIndent()
+        }
 
         val body = """{
-            |"config": {
-            |   "languageCode": "en-US",
-            |   "enableWordTimeOffsets": true
-            |},
-            |"audio": { "content": """".trimMargin() + wavString + """" }
-            |}""".trimMargin()
+            "config": {
+                $encodingConfig
+               "languageCode": "en-US",
+               "enableWordTimeOffsets": true
+            },
+            "audio": { "content": """".trimIndent() + base64 + """" }
+        }""".trimIndent()
         val postData: ByteArray = body.toByteArray(StandardCharsets.UTF_8)
 
         val url = URL("https://speech.googleapis.com/v1/speech:recognize?alt=json&key=${BuildConfig.GCLOUD_API_KEY}")
