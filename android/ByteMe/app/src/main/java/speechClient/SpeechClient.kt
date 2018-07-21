@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets
 object SpeechClient {
     private const val TAG = "SpeechClient"
 
-    private const val USE_DUMMY = false
+    private const val USE_DUMMY = true
     private val DUMMY_RESULT = SpeechRecognitionResult(transcript="hello world record to text with words", confidence=0.96601915, words=arrayListOf(WordInfo(start=700, end=1300, word="hello"), WordInfo(start=1300, end=1600, word="world"), WordInfo(start=1600, end=2600, word="record"), WordInfo(start=2600, end=2800, word="to"), WordInfo(start=2800, end=3600, word="text"), WordInfo(start=3600, end=3800, word="with"), WordInfo(start=3800, end=4600, word="words")))
 
     fun recognize(wavFile: String, forceRequest: Boolean = false): SpeechRecognitionResult {
