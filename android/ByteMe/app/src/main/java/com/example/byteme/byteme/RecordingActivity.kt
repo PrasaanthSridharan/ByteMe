@@ -43,6 +43,9 @@ class RecordingFlagAdapter : ArrayAdapter<RecordingFlagModel> {
             text_label.onFocusChangeListener = View.OnFocusChangeListener {
                 _, hasFocus -> if (!hasFocus) flag.label = text_label.text.toString()
             }
+            button_delete.setOnClickListener {
+                this@RecordingFlagAdapter.remove(flag)
+            }
         }
         return view
     }
