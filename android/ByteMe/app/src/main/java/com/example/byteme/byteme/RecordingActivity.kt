@@ -138,6 +138,9 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     private suspend fun saveRecording(db: AppDatabase): Long {
+        // Update the title in case it didn't (for some reason)
+        model.name = text_title.text.toString()
+
         val recording = RecordingRoom(
                 id = null,
                 path = model.path,
