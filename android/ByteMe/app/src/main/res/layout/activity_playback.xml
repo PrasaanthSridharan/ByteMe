@@ -11,9 +11,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:clickable="false"
         app:layout_constraintBottom_toTopOf="@+id/playback_playpause_button"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,14 +29,16 @@
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
-                android:clickable="false"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:clickable="false">
 
                 <LinearLayout
                     android:id="@+id/tab1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/rv_playback_bookmarks"
                         android:layout_width="match_parent"
@@ -55,7 +54,10 @@
                         android:id="@+id/tv_transcript"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textIsSelectable="true" />
+                        android:lineSpacingExtra="2sp"
+                        android:text="Loading Transcript..."
+                        android:textIsSelectable="true"
+                        android:textSize="16sp" />
                 </ScrollView>
             </FrameLayout>
         </LinearLayout>
