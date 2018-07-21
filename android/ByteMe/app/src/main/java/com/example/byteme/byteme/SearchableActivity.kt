@@ -14,6 +14,9 @@ import dataAccessLayer.AppDatabase
 import kotlinx.android.synthetic.main.recording_list_item.view.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import android.app.SearchManager
+
+
 
 class SearchableActivity : AppCompatActivity() {
     private lateinit var db: AppDatabase
@@ -21,14 +24,16 @@ class SearchableActivity : AppCompatActivity() {
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
 
+    // Dummy data set
     private var myDataset: MutableList<RecordingRoom> = mutableListOf()
+    private var searchMatches: MutableList<RecordingRoom> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
         viewManager = LinearLayoutManager(this)
-        viewAdapter = SearchAdapter(myDataset)
+        viewAdapter = SearchAdapter(searchMatches)
 
         recyclerView = findViewById<RecyclerView>(R.id.rv_search_list).apply {
             // changes in content do not change the layout size of the RecyclerView
@@ -42,15 +47,21 @@ class SearchableActivity : AppCompatActivity() {
         }
 
         launch {
-//            db = AppDatabase.getInstance(this@MainActivity)!!
+//            db = AppDatabase.getInstance(this@SearchableActivity)!!
             db = AppDatabase.getDummyInstance(this@SearchableActivity)!!
-
             myDataset.addAll(db.recordingDao.getAll())
-            launch(UI) { viewAdapter.notifyDataSetChanged() }
+        }
+
+        // Get the search intent from search dialog, verify the action and get the query
+        val intent = intent
+        if (Intent.ACTION_SEARCH == intent.action) {
+            val query = intent.getStringExtra(SearchManager.QUERY)
+            searchMatches.addAll(doMySearch(query))
+            launch(UI) {viewAdapter.notifyDataSetChanged()}
         }
     }
 
-    private class SearchAdapter(private val myDataset: MutableList<RecordingRoom>) :
+    private class SearchAdapter(private val searchMatches: MutableList<RecordingRoom>) :
             RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
 
         // Provide a reference to the views for each data item
@@ -80,7 +91,7 @@ class SearchableActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
-            val recording = myDataset[position]
+            val recording = searchMatches[position]
             holder.container.tag = recording.id
             holder.tvRecordingTitle.text = recording.name
             holder.tvDate.text = DATE_FORMAT.format(recording.created)
@@ -88,8 +99,21 @@ class SearchableActivity : AppCompatActivity() {
         }
 
         // Return the number of recordings in the list
-        override fun getItemCount() = myDataset.size
+        override fun getItemCount() = searchMatches.size
     }
+
+    private fun doMySearch(query: String?): MutableList<RecordingRoom> {
+        var queryMatches: MutableList<RecordingRoom> = mutableListOf()
+
+        // Check query against name of each recording in myDataset
+        myDataset.forEach {
+//            if (it.name == query) {
+            queryMatches.add(it)
+//            }
+        }
+        return queryMatches
+    }
+
 
     fun openRecording(view: View) {
         val intent = Intent(this, PlaybackActivity::class.java)
