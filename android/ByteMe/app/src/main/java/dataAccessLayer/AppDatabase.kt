@@ -7,21 +7,29 @@ import android.arch.persistence.room.TypeConverters
 import android.content.Context
 import businessLayer.RecordingFlagRoom
 import businessLayer.RecordingRoom
+import com.example.byteme.byteme.R
+import helpers.businessLayer.TranscriptWordsRoom
+import helpers.colorFromId
+import helpers.dataAccessLayer.TranscriptWordsDao
 
 @Database(
         version = 1,
         entities = [
             RecordingRoom::class,
-            RecordingFlagRoom::class])
+            RecordingFlagRoom::class,
+            TranscriptWordsRoom::class])
 @TypeConverters(RoomTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     protected abstract fun _getRecordingDao(): RecordingDao
     protected abstract fun _getRecordingFlagDao(): RecordingFlagDao
+    protected abstract fun _getTransciptWordsDao(): TranscriptWordsDao
 
     val recordingDao: RecordingDao
         get() = _getRecordingDao()
     val recordingFlagDao: RecordingFlagDao
         get() = _getRecordingFlagDao()
+    val transcriptWordsDao: TranscriptWordsDao
+        get() = _getTransciptWordsDao()
 
     companion object {
         private var INSTANCE: AppDatabase? = null

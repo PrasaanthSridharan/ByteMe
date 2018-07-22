@@ -9,6 +9,7 @@ import android.content.Context
 import android.os.PersistableBundle
 import android.util.Log
 import dataAccessLayer.AppDatabase
+import helpers.businessLayer.TranscriptWordsRoom
 import kotlinx.coroutines.experimental.launch
 import speechClient.SpeechClient
 import speechClient.SpeechRecognitionResult
@@ -28,7 +29,7 @@ class TranscriptionJobService : JobService() {
             db.recordingDao.addTranscript(recordingId, result.transcript)
             // Do this in case the job had previously failed
             db.transcriptWordsDao.removeWordsForRecording(recordingId)
-            db.transcriptWordsDao.insertTranscription(recordingId, TranscriptWords(result))
+            db.transcriptWordsDao.insert(result.toTranscriptWords(recordingId))
             jobFinished(params, false)
         }
 
@@ -60,41 +61,3 @@ class TranscriptionJobService : JobService() {
         }
     }
 }
-
-@Deprecated("Will be replaced by an @Entity data class")
-private data class TranscriptWords(
-        val wordIndices: Array<Int>,
-        val timeOffsets: List<Long>
-) {
-    constructor(recResult: SpeechRecognitionResult): this(
-            wordIndices = getWordIndices(recResult),
-            timeOffsets = recResult.words.map { it.start }
-    )
-
-    companion object {
-        private fun getWordIndices(recResult: SpeechRecognitionResult): Array<Int> {
-            var curIndex = 0
-            return Array(recResult.words.size) { i ->
-                val wordInfo = recResult.words[i]
-                val wordStartIndex = recResult.transcript.indexOf(wordInfo.word, curIndex)
-                curIndex = wordStartIndex + wordInfo.word.length
-                wordStartIndex
-            }
-        }
-    }
-}
-
-@Deprecated("Will be replaced by an @Dao abstract class")
-private object TranscriptWordsDao {
-    fun insertTranscription(recordingId: Long, transcriptWords: TranscriptWords) {
-        Log.d(TAG, "Inserting into TranscriptionWordsDao: $transcriptWords")
-    }
-
-    fun removeWordsForRecording(recordingId: Long) {
-        Log.d(TAG, "Removing words for $recordingId")
-    }
-}
-
-@Deprecated("Will be replaced by actual implementation")
-private val AppDatabase.transcriptWordsDao: TranscriptWordsDao
-    get() = TranscriptWordsDao

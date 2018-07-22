@@ -12,14 +12,17 @@ abstract class TranscriptWordsDao {
     abstract fun getAll(): List<TranscriptWordsRoom>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(flag: TranscriptWordsRoom)
+    abstract fun insert(transcript_words: TranscriptWordsRoom)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(flag: Collection<TranscriptWordsRoom>)
+    abstract fun insert(transcript_words: Collection<TranscriptWordsRoom>)
 
     @Query("DELETE from transcript_words")
     abstract fun deleteAll()
 
-    @Query("SELECT * from transcript_words WHERE text LIKE :query")
-    abstract fun search(query: String): List<TranscriptWordsRoom>
+    @Query("SELECT * from transcript_words WHERE recording_id = :recording_id AND transcript_index = :index")
+    abstract fun search(recording_id: Long, index: Int): List<TranscriptWordsRoom>
+
+    @Query("DELETE FROM transcript_words WHERE recording_id = :recording_id")
+    abstract fun removeWordsForRecording(recording_id: Long)
 }

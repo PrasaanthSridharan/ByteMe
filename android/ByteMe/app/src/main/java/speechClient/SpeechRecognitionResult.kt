@@ -1,5 +1,6 @@
 package speechClient
 
+import helpers.businessLayer.TranscriptWordsRoom
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -13,6 +14,19 @@ data class SpeechRecognitionResult(
             confidence = json.getDouble("confidence"),
             words = json.getJSONArray("words").map<JSONObject, WordInfo>{ WordInfo(it) }
     )
+
+    fun toTranscriptWords(recordingId: Long): Collection<TranscriptWordsRoom> {
+        val result = mutableListOf<TranscriptWordsRoom>()
+
+        for ((index, word) in words.withIndex()) {
+            result.add(TranscriptWordsRoom(id = null,
+                    recordingId = recordingId,
+                    transcriptIndex = index,
+                    audioOffset = word.start))
+        }
+
+        return result
+    }
 }
 
 /**

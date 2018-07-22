@@ -16,7 +16,7 @@ import businessLayer.RecordingRoom
                 onDelete = CASCADE))],
         indices = [
             Index("recording_id"), // foreign key
-            Index("text"),
+            Index("transcript_index"),
             Index("audio_offset")
         ])
 data class TranscriptWordsRoom(
@@ -26,7 +26,8 @@ data class TranscriptWordsRoom(
         @ColumnInfo(name = "recording_id")
         val recordingId: Long,
 
-        val text: String,
+        @ColumnInfo(name = "transcript_index")
+        val transcriptIndex: Int,
 
         @ColumnInfo(name = "audio_offset")
         val audioOffset: Long
