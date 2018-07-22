@@ -56,9 +56,13 @@ class SearchableActivity : AppCompatActivity() {
         val intent = intent
         if (Intent.ACTION_SEARCH == intent.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
-            searchMatches.addAll(doMySearch(query))
+            doMySearch(query)
             launch(UI) {viewAdapter.notifyDataSetChanged()}
         }
+
+//        doMySearch("My Recording")
+        searchMatches.add(myDataset[0])
+        launch(UI) {viewAdapter.notifyDataSetChanged()}
     }
 
     private class SearchAdapter(private val searchMatches: MutableList<RecordingRoom>) :
@@ -102,16 +106,13 @@ class SearchableActivity : AppCompatActivity() {
         override fun getItemCount() = searchMatches.size
     }
 
-    private fun doMySearch(query: String?): MutableList<RecordingRoom> {
-        var queryMatches: MutableList<RecordingRoom> = mutableListOf()
-
+    private fun doMySearch(query: String?) {
         // Check query against name of each recording in myDataset
         myDataset.forEach {
-//            if (it.name == query) {
-            queryMatches.add(it)
-//            }
+            if (it.name == query) {
+                searchMatches.add(it)
+            }
         }
-        return queryMatches
     }
 
 
