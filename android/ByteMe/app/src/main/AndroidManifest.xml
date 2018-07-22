@@ -16,18 +16,35 @@
         android:theme="@style/AppTheme">
 
         <!-- Activities -->
-        <activity android:name=".MainActivity"/>
+        <activity
+            android:name=".MainActivity">
+            <intent-filter>
+                <!-- Set default launch activity -->
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Enable search dialog for SearchableActivity -->
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchableActivity" />
+        </activity>
+
         <activity
             android:name=".RecordingActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".PlaybackActivity"/>
-        <activity android:name=".SearchableActivity">
-            <!-- Cut and paste MAIN and LAUNCHER lines of the intent-filter to set launch activity -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
 
-                <!-- Set the SearchableActivity to have search functionality -->
+        <activity android:name=".PlaybackActivity">
+            <!-- Enable search dialog for SearchableActivity -->
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchableActivity" />
+        </activity>
+
+        <activity
+            android:name=".SearchableActivity">
+            <intent-filter>
+                <!-- Enable search functionality -->
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             <meta-data android:name="android.app.searchable"
