@@ -50,19 +50,37 @@ class SearchableActivity : AppCompatActivity() {
 //            db = AppDatabase.getInstance(this@SearchableActivity)!!
             db = AppDatabase.getDummyInstance(this@SearchableActivity)!!
             myDataset.addAll(db.recordingDao.getAll())
-        }
 
-        // Get the search intent from search dialog, verify the action and get the query
-        val intent = intent
-        if (Intent.ACTION_SEARCH == intent.action) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
-            doMySearch(query)
+            handleIntent(intent)
+
+            // Let the viewAdapter know its content needs to be updated
             launch(UI) {viewAdapter.notifyDataSetChanged()}
         }
+    }
 
-//        doMySearch("My Recording")
-        searchMatches.add(myDataset[0])
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
         launch(UI) {viewAdapter.notifyDataSetChanged()}
+    }
+
+    private fun handleIntent(intent: Intent) {
+        // Get the search intent from search dialog, verify the action and get the query
+        if (Intent.ACTION_SEARCH == intent.action) {
+            val query = intent.getStringExtra(SearchManager.QUERY)
+
+            //use the query to search
+            doMySearch(query)
+        }
+    }
+
+    private fun doMySearch(query: String?) {
+        // Check query against name of each recording in myDataset
+        myDataset.forEach {
+            if (it.name == query) {
+                searchMatches.add(it)
+            }
+        }
     }
 
     private class SearchAdapter(private val searchMatches: MutableList<RecordingRoom>) :
@@ -105,16 +123,6 @@ class SearchableActivity : AppCompatActivity() {
         // Return the number of recordings in the list
         override fun getItemCount() = searchMatches.size
     }
-
-    private fun doMySearch(query: String?) {
-        // Check query against name of each recording in myDataset
-        myDataset.forEach {
-            if (it.name == query) {
-                searchMatches.add(it)
-            }
-        }
-    }
-
 
     fun openRecording(view: View) {
         val intent = Intent(this, PlaybackActivity::class.java)

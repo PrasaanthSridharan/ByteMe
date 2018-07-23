@@ -17,6 +17,11 @@ import kotlinx.android.synthetic.main.recording_list_item.view.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import java.text.SimpleDateFormat
+import android.support.v4.view.MenuItemCompat.getActionView
+import android.content.Context.SEARCH_SERVICE
+import android.app.SearchManager
+import android.content.Context
+import android.widget.SearchView
 
 
 class MainActivity : AppCompatActivity() {
@@ -85,6 +90,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.options_menu, menu)
+
+        // Associate searchable configuration with the SearchView
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchView = menu.findItem(R.id.options_menu).actionView as SearchView
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(componentName))
+
         return true
     }
 
