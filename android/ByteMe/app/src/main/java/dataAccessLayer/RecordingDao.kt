@@ -13,6 +13,9 @@ abstract class RecordingDao {
     @Query("SELECT * from recordings WHERE id = :id")
     abstract fun get(id: Long): RecordingRoom
 
+    @Query("SELECT * from recordings WHERE id IN(:ids)")
+    abstract fun getMany(ids: Set<Long>): List<RecordingRoom>
+
     @Query("SELECT * from recordings ORDER BY created DESC")
     abstract fun getAll(): List<RecordingRoom>
 
@@ -24,6 +27,9 @@ abstract class RecordingDao {
 
     @Query("DELETE from recordings")
     abstract fun deleteAll()
+
+    @Query("SELECT * from recordings WHERE name LIKE :query")
+    abstract fun searchNames(query: String): List<RecordingRoom>
 
     @Query("SELECT * from recordings WHERE transcript LIKE :query")
     abstract fun searchTranscripts(query: String): List<RecordingRoom>
