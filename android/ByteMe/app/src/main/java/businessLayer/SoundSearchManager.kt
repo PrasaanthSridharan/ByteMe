@@ -7,7 +7,7 @@ import dataAccessLayer.AppDatabase
 
 class SoundSearchManager(val context: Context) {
 
-    suspend fun search(keyword: String): Array<RecordingMatch> {
+    suspend fun search(keyword: String): Array<InnerRecordingMatch> {
         val db = AppDatabase.getDummyInstance(context)!!
 
         val flagResults = db.recordingFlagDao.search("%" + keyword + "%")
@@ -28,7 +28,7 @@ class SoundSearchManager(val context: Context) {
         return resultToArray(db, flagResults, transcriptWords)
     }
 
-    suspend fun search(keyword: String, recording: RecordingRoom): Array<RecordingMatch> {
+    suspend fun search(keyword: String, recording: RecordingRoom): Array<InnerRecordingMatch> {
         val db = AppDatabase.getDummyInstance(context)!!
 
         val flagResults = db.recordingFlagDao.searchRecording(recording.id!!, "%" + keyword + "%")
@@ -46,17 +46,17 @@ class SoundSearchManager(val context: Context) {
         return resultToArray(db, flagResults, transcriptWords)
     }
 
-    fun resultToArray(db: AppDatabase, flagResults: List<RecordingFlagRoom>, transcriptWords: List<TranscriptWordsRoom>): Array<RecordingMatch>  {
-        var resultList = mutableListOf<RecordingMatch>()
+    fun resultToArray(db: AppDatabase, flagResults: List<RecordingFlagRoom>, transcriptWords: List<TranscriptWordsRoom>): Array<InnerRecordingMatch>  {
+        var resultList = mutableListOf<InnerRecordingMatch>()
 
         for (result in flagResults) {
             val recording = db.recordingDao.get(result.recordingId)
-            resultList.add(RecordingMatch(recording, result.time))
+            resultList.add(InnerRecordingMatch(recording, result.time))
         }
 
         for (result in transcriptWords) {
             val recording = db.recordingDao.get(result.recordingId)
-            resultList.add(RecordingMatch(recording, result.audioOffset))
+            resultList.add(InnerRecordingMatch(recording, result.audioOffset))
         }
 
         return resultList.toTypedArray()
