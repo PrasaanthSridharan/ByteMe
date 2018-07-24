@@ -1,8 +1,8 @@
 package dataAccessLayer
 
-import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
+import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 import android.content.Context
 import android.graphics.Color
@@ -10,6 +10,7 @@ import businessLayer.RecordingFlagRoom
 import businessLayer.RecordingRoom
 import helpers.businessLayer.TranscriptWordsRoom
 import helpers.dataAccessLayer.TranscriptWordsDao
+import speechClient.SpeechClient
 
 @Database(
         version = 1,
@@ -57,7 +58,7 @@ abstract class AppDatabase : RoomDatabase() {
                         id = 3,
                         name = "CS 446 L04",
                         path = DUMMY_AUDIO_FILE,
-                        transcript = null,
+                        transcript = "hello world record to text with words",
                         created = RoomTypeConverters.ISO8601_SDF.parse("2018-05-12T11:31:32-0400"),
                         duration = 56*60*1000 + 18*1000),
                 RecordingRoom(
@@ -80,7 +81,7 @@ abstract class AppDatabase : RoomDatabase() {
                         recordingId = 1,
                         time = 15*SEC,
                         color = Color.BLUE,
-                        label = "some label"
+                        label = "some label hello world"
                 ),
                 RecordingFlagRoom(
                         id = null,
@@ -157,6 +158,8 @@ abstract class AppDatabase : RoomDatabase() {
             DUMMY_INSTANCE!!.recordingDao.insert(DUMMY_RECORDINGS)
             DUMMY_INSTANCE!!.recordingFlagDao.deleteAll()
             DUMMY_INSTANCE!!.recordingFlagDao.insert(DUMMY_FLAGS)
+            DUMMY_INSTANCE!!.transcriptWordsDao.deleteAll()
+            DUMMY_INSTANCE!!.transcriptWordsDao.insert(SpeechClient.DUMMY_RESULT.toTranscriptWords(3))
 
             return DUMMY_INSTANCE
         }
