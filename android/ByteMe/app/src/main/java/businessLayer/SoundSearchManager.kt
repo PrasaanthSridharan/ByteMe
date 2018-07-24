@@ -7,59 +7,60 @@ import dataAccessLayer.AppDatabase
 
 class SoundSearchManager(val context: Context) {
 
-    suspend fun search(keyword: String): Array<InnerRecordingMatch> {
+    suspend fun search(keyword: String, recordingId: Long? = null): List<RecordingMatch> {
         val db = AppDatabase.getDummyInstance(context)!!
 
-        val flagResults = db.recordingFlagDao.search("%" + keyword + "%")
+        // These are all the recordings we'll return
+        val matchingRecordingIds = mutableMapOf<Long, RecordingRoom?>()
 
-        val recordings = db.recordingDao.searchTranscripts("%" + keyword + "%")
-        val transcriptWords = mutableListOf<TranscriptWordsRoom>()
-
-        for (recording in recordings) {
-            if (recording.transcript != null) {
-                for ((index, word) in recording.transcript.split(" ").withIndex()) {
-                    if (word.equals(keyword)) {
-                        transcriptWords.addAll(db.transcriptWordsDao.search(recording.id!!, index))
-                    }
-                }
-            }
+        // Matches in recording name
+        if (recordingId == null) {
+            val recordingNameMatches = db.recordingDao.searchNames("%$keyword%")
+            recordingNameMatches.forEach { matchingRecordingIds[it.id!!] = it }
         }
 
-        return resultToArray(db, flagResults, transcriptWords)
-    }
+        // Matches in flag keywords
+        val flagMatches = db.recordingFlagDao.search("%$keyword%", recordingId)
+                .map { InnerRecordingMatch(it.recordingId, it.time) }
+        flagMatches.forEach {
+            if (!matchingRecordingIds.containsKey(it.recordingId))
+                matchingRecordingIds[it.recordingId] = null
+        }
 
-    suspend fun search(keyword: String, recording: RecordingRoom): Array<InnerRecordingMatch> {
-        val db = AppDatabase.getDummyInstance(context)!!
-
-        val flagResults = db.recordingFlagDao.searchRecording(recording.id!!, "%" + keyword + "%")
-
+        // Matches in transcript
+        val transcriptMatches = when(recordingId) {
+            null -> db.recordingDao.searchTranscripts("%$keyword%")
+            else -> listOf(db.recordingDao.get(recordingId))
+        }
         val transcriptWords = mutableListOf<TranscriptWordsRoom>()
+        transcriptMatches.forEach { matchingRecordingIds[it.id!!] = it }
 
-        if (recording.transcript != null) {
-            for ((index, word) in recording.transcript.split(" ").withIndex()) {
-                if (word.equals(keyword)) {
+        for (recording in transcriptMatches) {
+            for ((index, word) in recording.transcript!!.split(" ").withIndex()) {
+                if (word == keyword) {
                     transcriptWords.addAll(db.transcriptWordsDao.search(recording.id!!, index))
                 }
             }
         }
 
-        return resultToArray(db, flagResults, transcriptWords)
-    }
+        val transcriptWordMatches = transcriptWords
+                .map { InnerRecordingMatch(it.recordingId, it.audioOffset) }
 
-    fun resultToArray(db: AppDatabase, flagResults: List<RecordingFlagRoom>, transcriptWords: List<TranscriptWordsRoom>): Array<InnerRecordingMatch>  {
-        var resultList = mutableListOf<InnerRecordingMatch>()
+        val innerMatches = flagMatches + transcriptWordMatches
 
-        for (result in flagResults) {
-            val recording = db.recordingDao.get(result.recordingId)
-            resultList.add(InnerRecordingMatch(recording, result.time))
+        // Load remaining recordings
+        val idsToGet = matchingRecordingIds
+                .filterValues { it == null }
+                .keys
+        db.recordingDao.getMany(idsToGet)
+                .forEach { matchingRecordingIds[it.id!!] = it }
+
+        val innerMatchesByRecording = innerMatches
+                .groupBy { it.recordingId }
+                .mapValues { (_, matches) -> matches.sortedBy { it.timestamp } }
+
+        return matchingRecordingIds.values.toList().map { recording ->
+            RecordingMatch(recording!!, innerMatchesByRecording[recording.id] ?: listOf())
         }
-
-        for (result in transcriptWords) {
-            val recording = db.recordingDao.get(result.recordingId)
-            resultList.add(InnerRecordingMatch(recording, result.audioOffset))
-        }
-
-        return resultList.toTypedArray()
     }
-
 }
