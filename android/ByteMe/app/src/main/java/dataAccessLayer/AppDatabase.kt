@@ -5,11 +5,10 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.TypeConverters
 import android.content.Context
+import android.graphics.Color
 import businessLayer.RecordingFlagRoom
 import businessLayer.RecordingRoom
-import com.example.byteme.byteme.R
 import helpers.businessLayer.TranscriptWordsRoom
-import helpers.colorFromId
 import helpers.dataAccessLayer.TranscriptWordsDao
 
 @Database(
@@ -36,42 +35,96 @@ abstract class AppDatabase : RoomDatabase() {
         private var DUMMY_INSTANCE: AppDatabase? = null
 
         const val DUMMY_AUDIO_FILE = "/sdcard/SoundHunt/Albatross - Big Black Bear.mp3"
-        private val DUMMY_DATA = arrayOf(
+        private const val SEC = 1000L
+        private const val MIN = 60 * SEC
+
+        private val DUMMY_RECORDINGS = arrayOf(
                 RecordingRoom(
-                        id = null,
+                        id = 1,
                         name = "CS 446 L01",
                         path = DUMMY_AUDIO_FILE,
                         transcript = null,
                         created = RoomTypeConverters.ISO8601_SDF.parse("2018-05-07T11:36:00-0400"),
                         duration = 48*60*1000 + 45*1000),
                 RecordingRoom(
-                        id = null,
+                        id = 2,
                         name = "CS 446 L02",
                         path = DUMMY_AUDIO_FILE,
                         transcript = null,
                         created = RoomTypeConverters.ISO8601_SDF.parse("2018-05-09T11:37:56-0400"),
                         duration = 49*60*1000 + 12*1000),
                 RecordingRoom(
-                        id = null,
+                        id = 3,
                         name = "CS 446 L04",
                         path = DUMMY_AUDIO_FILE,
                         transcript = null,
                         created = RoomTypeConverters.ISO8601_SDF.parse("2018-05-12T11:31:32-0400"),
                         duration = 56*60*1000 + 18*1000),
                 RecordingRoom(
-                        id = null,
+                        id = 4,
                         name = "My Recording",
                         path = DUMMY_AUDIO_FILE,
                         transcript = null,
                         created = RoomTypeConverters.ISO8601_SDF.parse("2018-07-11T14:00:00-0400"),
                         duration = 15*60*1000 + 45*1000),
                 RecordingRoom(
-                        id = null,
+                        id = 5,
                         name = "My Other Recording",
                         path = DUMMY_AUDIO_FILE,
                         transcript = null,
                         created = RoomTypeConverters.ISO8601_SDF.parse("2018-07-13T13:00:00-0400"),
                         duration = 18*60*1000 + 46*1000))
+        private val DUMMY_FLAGS = arrayOf(
+                RecordingFlagRoom(
+                        id = null,
+                        recordingId = 1,
+                        time = 15*SEC,
+                        color = Color.BLUE,
+                        label = "some label"
+                ),
+                RecordingFlagRoom(
+                        id = null,
+                        recordingId = 1,
+                        time = 15*SEC,
+                        color = Color.BLUE,
+                        label = "some label something ELSE!!!"
+                ),
+                RecordingFlagRoom(
+                        id = null,
+                        recordingId = 1,
+                        time = 30*SEC,
+                        color = Color.RED,
+                        label = "good question"
+                ),
+                RecordingFlagRoom(
+                        id = null,
+                        recordingId = 1,
+                        time = 5*MIN,
+                        color = Color.RED,
+                        label = "look up uml diagram"
+                ),
+                RecordingFlagRoom(
+                        id = null,
+                        recordingId = 4,
+                        time = 30*SEC,
+                        color = Color.RED,
+                        label = "everything is out of tune"
+                ),
+                RecordingFlagRoom(
+                        id = null,
+                        recordingId = 4,
+                        time = 5*MIN + 14*SEC,
+                        color = Color.RED,
+                        label = "this still sounds choppy"
+                ),
+                RecordingFlagRoom(
+                        id = null,
+                        recordingId = 5,
+                        time = 7*MIN + 21*SEC,
+                        color = Color.GREEN,
+                        label = "this is sounding less choppy!!"
+                )
+        )
 
         fun getInstance(context: Context): AppDatabase? {
             if (INSTANCE != null) return INSTANCE
@@ -101,7 +154,9 @@ abstract class AppDatabase : RoomDatabase() {
             }
 
             DUMMY_INSTANCE!!.recordingDao.deleteAll()
-            DUMMY_INSTANCE!!.recordingDao.insert(DUMMY_DATA)
+            DUMMY_INSTANCE!!.recordingDao.insert(DUMMY_RECORDINGS)
+            DUMMY_INSTANCE!!.recordingFlagDao.deleteAll()
+            DUMMY_INSTANCE!!.recordingFlagDao.insert(DUMMY_FLAGS)
 
             return DUMMY_INSTANCE
         }
