@@ -1,7 +1,6 @@
 package helpers.businessLayer
 
 import android.content.Context
-import businessLayer.RecordingFlagRoom
 import businessLayer.RecordingRoom
 import dataAccessLayer.AppDatabase
 
@@ -21,7 +20,7 @@ class SoundSearchManager(val context: Context) {
 
         // Matches in flag keywords
         val flagMatches = db.recordingFlagDao.search("%$keyword%", recordingId)
-                .map { InnerRecordingMatch(it.recordingId, it.time) }
+                .map { InnerRecordingMatch.Companion.Flag(it) }
         flagMatches.forEach {
             if (!matchingRecordingIds.containsKey(it.recordingId))
                 matchingRecordingIds[it.recordingId] = null
@@ -44,7 +43,7 @@ class SoundSearchManager(val context: Context) {
         }
 
         val transcriptWordMatches = transcriptWords
-                .map { InnerRecordingMatch(it.recordingId, it.audioOffset) }
+                .map { InnerRecordingMatch.Companion.Transcript(it) }
 
         val innerMatches = flagMatches + transcriptWordMatches
 
