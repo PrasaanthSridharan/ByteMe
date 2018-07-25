@@ -16,6 +16,8 @@ import kotlinx.coroutines.experimental.launch
 import android.app.SearchManager
 import helpers.businessLayer.RecordingMatch
 import helpers.businessLayer.SoundSearchManager
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class SearchableActivity : AppCompatActivity() {
@@ -123,5 +125,9 @@ class SearchableActivity : AppCompatActivity() {
 
         // start your next activity
         startActivity(intent)
+    }
+
+    companion object {
+        private val DATE_FORMAT = SimpleDateFormat("yyyy/MM/dd", Locale.CANADA)
     }
 }
