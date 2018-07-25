@@ -120,18 +120,19 @@ class PlaybackActivity : AppCompatActivity() {
 
     fun setupAudio(mp: MediaPlayer) {
 
-        var playPauseButton = findViewById<ImageButton>(R.id.playback_playpause_button)
-        var seekBar = findViewById<SeekBar>(R.id.playback_seekbar)
+        val playPauseButton = findViewById<ImageButton>(R.id.playback_playpause_button)
+        val seekBar = findViewById<SeekBar>(R.id.playback_seekbar)
 
-        if (mp != null) {
-            playPauseButton.setOnClickListener {
-                if (mp.isPlaying) {
-                    mp.pause()
-                    playPauseButton.setImageResource(R.drawable.ic_play_arrow_black_24dp)
-                } else {
-                    mp.start()
-                    playPauseButton.setImageResource(R.drawable.ic_pause_black_24dp)
-                }
+        if (intent.hasExtra("timestamp"))
+            mp.seekTo((intent.extras["timestamp"] as Long).toInt())
+
+        playPauseButton.setOnClickListener {
+            if (mp.isPlaying) {
+                mp.pause()
+                playPauseButton.setImageResource(R.drawable.ic_play_arrow_black_24dp)
+            } else {
+                mp.start()
+                playPauseButton.setImageResource(R.drawable.ic_pause_black_24dp)
             }
         }
 
