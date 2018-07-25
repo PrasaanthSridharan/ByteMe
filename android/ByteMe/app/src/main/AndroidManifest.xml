@@ -34,6 +34,10 @@
             android:name="businessLayer.TranscriptionJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="true" />
+        <service
+            android:name="businessLayer.TranscriptionResponseJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true" />
     </application>
 
 </manifest>

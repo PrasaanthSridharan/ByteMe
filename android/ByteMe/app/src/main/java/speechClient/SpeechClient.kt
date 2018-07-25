@@ -21,7 +21,12 @@ object SpeechClient {
             DUMMY_RESULT
         } else {
             Log.d(TAG,"Making request transcription request for $wavFile")
-            val jsonStr = googleSpeechApiRecognize(wavFile)
+            val jsonStr = googleSpeechApiRecognize(wavFile, false)
+            if (jsonStr == "{}") {
+                // No transcription?!?!?
+                Log.w(TAG, "Transcription returned {}")
+                return@recognize SpeechRecognitionResult("", 0.0, arrayListOf())
+            }
             Log.d(TAG, "Transcription responded: $jsonStr")
             SpeechRecognitionResult(JSONObject(jsonStr)
                     .getJSONArray("results")
@@ -35,9 +40,71 @@ object SpeechClient {
     }
 
     /**
+     * Returns operation name
+     */
+    fun recognizeLongForm(wavFile: String, forceRequest: Boolean = false): String? {
+        return if (USE_DUMMY && !forceRequest) {
+            Log.d(TAG, "Responding with dummy transcription.")
+            return null
+        } else {
+            Log.d(TAG,"Making request transcription request for $wavFile")
+            val jsonStr = googleSpeechApiRecognize(wavFile, longRunning = true)
+            if (jsonStr == "{}") {
+                // No transcription?!?!?
+                Log.w(TAG, "Transcription returned {}")
+                return@recognizeLongForm null
+            }
+            Log.d(TAG, "Transcription responded: $jsonStr")
+            JSONObject(jsonStr).getString("name")
+            .apply {
+                Log.d(TAG, "Response successfully parsed.")
+            }
+        }
+    }
+
+
+    fun getOperation(operationName: String): SpeechRecognitionResult? {
+        val jsonStr = googleSpeechApiGetOperation(operationName)
+        val json = JSONObject(jsonStr)
+        Log.d(TAG, "Response: $jsonStr")
+        if (!json.has("done") || !json.getBoolean("done"))
+            return null
+
+        return SpeechRecognitionResult(json
+                .getJSONObject("response")
+                .getJSONArray("results")
+                .getJSONObject(0)
+                .getJSONArray("alternatives")
+                .getJSONObject(0)).apply {
+            Log.d(TAG, "Response successfully parsed.")
+        }
+    }
+
+    fun googleSpeechApiGetOperation(operationName: String): String {
+        val url = URL("https://speech.googleapis.com/v1/operations/$operationName?alt=json&key=${BuildConfig.GCLOUD_API_KEY}")
+
+        val connection = url.openConnection() as HttpURLConnection
+        connection.apply {
+            requestMethod = "GET"
+//            connectTimeout = 300000
+            doInput = true
+            setRequestProperty("charset", "utf-8")
+            setRequestProperty("Content-Type", "application/json")
+        }
+
+        return try {
+            streamToString(BufferedReader(InputStreamReader(connection.inputStream)))
+        } catch (e: IOException) {
+            streamToString(BufferedReader(InputStreamReader(connection.errorStream)))
+        } finally {
+            connection.disconnect()
+        }
+    }
+
+    /**
      * Note the API requires that the file be mono-channel.
      */
-    private fun googleSpeechApiRecognize(path: String): String {
+    private fun googleSpeechApiRecognize(path: String, longRunning: Boolean = false): String {
         val base64 = Base64.encodeToString(FileInputStream(path).readBytes(), Base64.NO_WRAP)
 
         val body = """{
@@ -49,7 +116,9 @@ object SpeechClient {
         }""".trimIndent()
         val postData: ByteArray = body.toByteArray(StandardCharsets.UTF_8)
 
-        val url = URL("https://speech.googleapis.com/v1/speech:recognize?alt=json&key=${BuildConfig.GCLOUD_API_KEY}")
+        val endpoint = if(longRunning) "https://speech.googleapis.com/v1/speech:longrunningrecognize"
+        else "https://speech.googleapis.com/v1/speech:recognize"
+        val url = URL("$endpoint?alt=json&key=${BuildConfig.GCLOUD_API_KEY}")
 
         val connection = url.openConnection() as HttpURLConnection
         connection.apply {
@@ -75,6 +144,8 @@ object SpeechClient {
             connection.disconnect()
         }
     }
+
+
 
     private fun streamToString(reader: BufferedReader): String {
         val response = StringBuffer()
