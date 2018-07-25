@@ -8,4 +8,9 @@
     <string name="play_button">Play</string>
     <string name="bookmark">bookmark</string>
     <string name="search_hint">Search for recordings</string>
+    <string name="dummy_title">Recording 0001</string>
+    <string name="dummy_duration">31:42</string>
+    <string name="dummy_date">2017 - 09</string>
+    <string name="dummy_timestamp">00:07</string>
+    <string name="dummy_search_string">captain\'s log</string>
 </resources>
