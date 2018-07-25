@@ -1,5 +1,7 @@
 package com.example.byteme.byteme
 
+import android.app.SearchManager
+import android.content.Context
 import android.graphics.Typeface
 import android.media.MediaPlayer
 import android.net.Uri
@@ -9,10 +11,10 @@ import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
 import android.widget.ImageButton
+import android.widget.SearchView
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
@@ -32,19 +34,20 @@ class PlaybackActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
+    private var recordingId: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_playback)
 
-        val recordingId = this.intent.extras["recording_id"] as Long
+        recordingId = this.intent.extras["recording_id"] as Long
 
         setupTabs()
 
         launch {
             val db = AppDatabase.getInstance(this@PlaybackActivity)!!
-            recording = db.recordingDao.get(recordingId)
-            flags = db.recordingFlagDao.getForRecording(recordingId)
+            recording = db.recordingDao.get(recordingId!!)
+            flags = db.recordingFlagDao.getForRecording(recordingId!!)
 
             val musicData = Uri.parse(recording.path)
             val mp = MediaPlayer.create(this@PlaybackActivity, musicData)
@@ -55,6 +58,40 @@ class PlaybackActivity : AppCompatActivity() {
                 setupTranscript(recording.transcript)
             }
         }
+    }
+
+    override fun onSearchRequested(): Boolean {
+        val appData = Bundle()
+        Log.d("debug", "poulet")
+        Log.d("debug", recordingId.toString())
+        appData.putLong("recording_id", recordingId!!)
+        startSearch(null, false, appData, false)
+        return true
+    }
+
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when (item.getItemId()) {
+//            R.id.options_menu -> {
+//                // start search dialog
+//                super.onSearchRequested()
+//                return true
+//            }
+//            else -> return super.onOptionsItemSelected(item)
+//        }
+//    }
+
+    // This is the toolbar where the search icon lives
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.options_menu, menu)
+
+        // Associate searchable configuration with the SearchView
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchView = menu.findItem(R.id.options_menu).actionView as SearchView
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(componentName))
+
+        return true
     }
 
     private fun setupTranscript(transcript: String?) {
@@ -83,18 +120,19 @@ class PlaybackActivity : AppCompatActivity() {
 
     fun setupAudio(mp: MediaPlayer) {
 
-        var playPauseButton = findViewById<ImageButton>(R.id.playback_playpause_button)
-        var seekBar = findViewById<SeekBar>(R.id.playback_seekbar)
+        val playPauseButton = findViewById<ImageButton>(R.id.playback_playpause_button)
+        val seekBar = findViewById<SeekBar>(R.id.playback_seekbar)
 
-        if (mp != null) {
-            playPauseButton.setOnClickListener {
-                if (mp.isPlaying) {
-                    mp.pause()
-                    playPauseButton.setImageResource(R.drawable.ic_play_arrow_black_24dp)
-                } else {
-                    mp.start()
-                    playPauseButton.setImageResource(R.drawable.ic_pause_black_24dp)
-                }
+        if (intent.hasExtra("timestamp"))
+            mp.seekTo((intent.extras["timestamp"] as Long).toInt())
+
+        playPauseButton.setOnClickListener {
+            if (mp.isPlaying) {
+                mp.pause()
+                playPauseButton.setImageResource(R.drawable.ic_play_arrow_black_24dp)
+            } else {
+                mp.start()
+                playPauseButton.setImageResource(R.drawable.ic_pause_black_24dp)
             }
         }
 

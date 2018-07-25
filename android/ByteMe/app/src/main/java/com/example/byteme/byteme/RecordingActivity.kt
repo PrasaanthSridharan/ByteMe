@@ -116,9 +116,9 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     fun flagButtonPressed(view: View) {
-        val colorId = FLAG_BUTTON_COLORS[view.id]
+        val colorId = FLAG_BUTTON_COLORS[view.id]!!
         val time = System.currentTimeMillis() - recordingStart
-        flagsAdapter.add(RecordingFlagModel(time, colorFromId(colorId!!), null))
+        flagsAdapter.add(RecordingFlagModel(time, colorFromId(colorId), null))
     }
 
     fun stopButtonPressed(view: View) {

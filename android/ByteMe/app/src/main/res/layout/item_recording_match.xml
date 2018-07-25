@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.LinearLayout
+    android:orientation="horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/text_time"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:paddingStart="5dip"
+        android:paddingEnd="5dip"
+        android:text="00:00" />
+
+    <ImageView
+        android:id="@+id/image_flag"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/ic_flag_icon"
+        android:contentDescription="Flag icon" />
+
+    <ImageView
+        android:id="@+id/image_transcript"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/ic_text_fields_black_24dp"
+        android:contentDescription="Transcript icon" />
+
+    <TextView
+        android:id="@+id/text_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:layout_weight="1"
+        android:textSize="12sp" />
+</android.widget.LinearLayout>

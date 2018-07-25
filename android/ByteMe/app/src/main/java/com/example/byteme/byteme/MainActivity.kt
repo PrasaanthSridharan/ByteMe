@@ -9,9 +9,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageButton
 import businessLayer.RecordingRoom
 import dataAccessLayer.AppDatabase
@@ -19,6 +17,11 @@ import kotlinx.android.synthetic.main.recording_list_item.view.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import java.text.SimpleDateFormat
+import android.support.v4.view.MenuItemCompat.getActionView
+import android.content.Context.SEARCH_SERVICE
+import android.app.SearchManager
+import android.content.Context
+import android.widget.SearchView
 
 
 class MainActivity : AppCompatActivity() {
@@ -30,18 +33,13 @@ class MainActivity : AppCompatActivity() {
     private val RECORD_REQUEST_CODE = 101
     private val STORAGE_REQUEST_CODE = 102
 
-    // dataset of dummy recording titles
-    /*
-    val myDataset = arrayOf("Meeting", "Fri_scrum", "Mon_scrum", "Lecture", "Interview",
-            "Approval", "Brainstorming")
-    */
-
     private var myDataset: MutableList<RecordingRoom> = mutableListOf()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //setContentView(R.layout.activity_search)
 
         // TODO: Fix me, this isn't fully correct ---
         requestPermission(Manifest.permission.RECORD_AUDIO,
@@ -82,6 +80,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // This is the toolbar where the search icon lives
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.options_menu, menu)
+
+        // Associate searchable configuration with the SearchView
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchView = menu.findItem(R.id.options_menu).actionView as SearchView
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(componentName))
+
+        return true
+    }
+
     private fun requestPermission(permissionType: String, requestCode: Int) {
         val permission = ContextCompat.checkSelfPermission(this,
                 permissionType)
@@ -104,7 +116,7 @@ class MainActivity : AppCompatActivity() {
 
         class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             // Holds the view that will add each recording title
-            val container = view.linearLayout
+            val container = view.list_item_layout
             val tvRecordingTitle = view.tv_recording_title
             val tvDate = view.tv_date
             val tvDuration = view.tv_duration
