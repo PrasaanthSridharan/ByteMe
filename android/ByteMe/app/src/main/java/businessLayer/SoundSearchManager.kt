@@ -7,7 +7,7 @@ import dataAccessLayer.AppDatabase
 class SoundSearchManager(val context: Context) {
 
     suspend fun search(keyword: String, recordingId: Long? = null): List<RecordingMatch> {
-        val db = AppDatabase.getDummyInstance(context)!!
+        val db = AppDatabase.getInstance(context)!!
 
         // These are all the recordings we'll return
         val matchingRecordingIds = mutableMapOf<Long, RecordingRoom?>()

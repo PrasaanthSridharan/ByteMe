@@ -42,7 +42,7 @@ class PlaybackActivity : AppCompatActivity() {
         setupTabs()
 
         launch {
-            val db = AppDatabase.getDummyInstance(this@PlaybackActivity)!!
+            val db = AppDatabase.getInstance(this@PlaybackActivity)!!
             recording = db.recordingDao.get(recordingId)
             flags = db.recordingFlagDao.getForRecording(recordingId)
 

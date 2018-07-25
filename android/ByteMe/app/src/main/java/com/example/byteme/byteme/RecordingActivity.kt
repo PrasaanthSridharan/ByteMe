@@ -97,7 +97,7 @@ class RecordingActivity : AppCompatActivity() {
         model.path = RecordingManager.recordAudio()
 
         launch {
-            val db = AppDatabase.getDummyInstance(this@RecordingActivity)!!
+            val db = AppDatabase.getInstance(this@RecordingActivity)!!
             model.name = db.recordingDao.getNextRecordingName()
             launch(UI) { text_title.setText(model.name) }
         }
@@ -131,7 +131,7 @@ class RecordingActivity : AppCompatActivity() {
 
         launch {
             val context = this@RecordingActivity
-            val db = AppDatabase.getDummyInstance(context)!!
+            val db = AppDatabase.getInstance(context)!!
             val recordingId = saveRecording(db)
             saveFlags(db, recordingId)
             TranscriptionJobService.scheduleTranscriptionJob(context, recordingId, model.path)

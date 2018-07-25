@@ -68,8 +68,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         launch {
-//            db = AppDatabase.getInstance(this@MainActivity)!!
-            db = AppDatabase.getDummyInstance(this@MainActivity)!!
+            db = AppDatabase.getInstance(this@MainActivity)!!
 
             myDataset.addAll(db.recordingDao.getAll())
             launch(UI) { viewAdapter.notifyDataSetChanged() }

@@ -25,7 +25,7 @@ class TranscriptionJobService : JobService() {
         launch {
             val result = SpeechClient.recognize(audioFile)
 
-            val db = AppDatabase.getDummyInstance(this@TranscriptionJobService)!!
+            val db = AppDatabase.getInstance(this@TranscriptionJobService)!!
             db.recordingDao.addTranscript(recordingId, result.transcript)
             // Do this in case the job had previously failed
             db.transcriptWordsDao.removeWordsForRecording(recordingId)
