@@ -122,11 +122,6 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     fun stopButtonPressed(view: View) {
-        val intent = Intent(this, MainActivity::class.java)
-        // To pass any data to next activity
-        //intent.putExtra("keyIdentifier", value)
-        // start your next activity
-
         RecordingManager.stopAudio()  // Stop Recording
 
         launch {
@@ -136,7 +131,9 @@ class RecordingActivity : AppCompatActivity() {
             saveFlags(db, recordingId)
             TranscriptionJobService.scheduleTranscriptionJob(context, recordingId, model.path)
 
-            launch (UI) { startActivity(intent) }
+            launch (UI) {
+                finish()
+            }
         }
     }
 

@@ -25,7 +25,6 @@ import android.widget.SearchView
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var db: AppDatabase
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
@@ -66,10 +65,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         launch {
-            db = AppDatabase.getInstance(this@MainActivity)!!
-
-            myDataset.addAll(db.recordingDao.getAll())
-            launch(UI) { viewAdapter.notifyDataSetChanged() }
+            populateUI()
         }
 
         val micButton = findViewById<ImageButton>(R.id.mic_button)
@@ -78,6 +74,24 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, RecordingActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private suspend fun populateUI() {
+        val db = AppDatabase.getInstance(this@MainActivity)!!
+
+        myDataset.clear()
+        myDataset.addAll(db.recordingDao.getAll())
+        launch(UI) { viewAdapter.notifyDataSetChanged() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        launch { populateUI() }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        launch { populateUI() }
     }
 
     // This is the toolbar where the search icon lives
