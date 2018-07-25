@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.recording_list_item.view.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import android.app.SearchManager
+import android.util.Log
 import helpers.businessLayer.RecordingMatch
 import helpers.businessLayer.SoundSearchManager
 import java.text.SimpleDateFormat
@@ -66,12 +67,19 @@ class SearchableActivity : AppCompatActivity() {
         // Verify intent is from search dialog, i.e. is the right action, and get the query
         if (Intent.ACTION_SEARCH == intent.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
+            val appData = intent.getBundleExtra(SearchManager.APP_DATA)
+            var id: Long? = null
+            if (appData != null) {
+                id = appData.getLong("recording_id")
+            }
+
+            Log.d("debug", id.toString())
 
             // Perform the search
             val searchManager = SoundSearchManager(this@SearchableActivity)
 
             // Populate searchMatches with search matches returned from search
-            searchMatches.addAll(searchManager.search(query))
+            searchMatches.addAll(searchManager.search(query, id))
         }
     }
 

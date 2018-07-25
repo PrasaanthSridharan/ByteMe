@@ -38,7 +38,7 @@
             <!-- Enable search dialog for SearchableActivity -->
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value=".SearchableActivity" />
+                android:value="com.example.byteme.byteme.SearchableActivity" />
         </activity>
 
         <activity

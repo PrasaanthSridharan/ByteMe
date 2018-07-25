@@ -33,12 +33,6 @@ class MainActivity : AppCompatActivity() {
     private val RECORD_REQUEST_CODE = 101
     private val STORAGE_REQUEST_CODE = 102
 
-    // dataset of dummy recording titles
-    /*
-    private val myDataset = arrayOf("Meeting", "Fri_scrum", "Mon_scrum", "Lecture", "Interview",
-            "Approval", "Brainstorming")
-    */
-
     private var myDataset: MutableList<RecordingRoom> = mutableListOf()
 
 
